@@ -1,5 +1,5 @@
 
-import { Python, Database, FileJson, FileCode, PenTool, React } from 'lucide-react';
+import { Code2, Database, FileJson, FileCode, PenTool, Laptop } from 'lucide-react';
 
 interface SkillCardProps {
   title: string;
@@ -26,7 +26,7 @@ const SkillsSection = () => {
     {
       title: "Languages",
       items: ["Python", "JavaScript", "SQL"],
-      icon: <Python className="skill-icon" />
+      icon: <Code2 className="skill-icon" />
     },
     {
       title: "Frontend",
@@ -41,7 +41,7 @@ const SkillsSection = () => {
     {
       title: "Mobile",
       items: ["Flutter", "React Native"],
-      icon: <React className="skill-icon" />
+      icon: <Laptop className="skill-icon" />
     },
     {
       title: "Data Tools",

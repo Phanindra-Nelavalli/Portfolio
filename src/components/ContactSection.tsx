@@ -1,136 +1,131 @@
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useToast } from "@/components/ui/toast";
-import { Github, Linkedin, Mail } from 'lucide-react';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." })
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useState } from 'react';
+import { User, Mail, Send, ArrowRight } from 'lucide-react';
+import { Button } from "./ui/button";
+import { Input } from "./ui/input"; 
+import { Textarea } from "./ui/textarea";
+import { Card, CardContent } from "./ui/card";
+import { toast } from "@/hooks/use-toast"; // Updated from @/components/ui/toast
 
 const ContactSection = () => {
-  const { toast } = useToast();
-  
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      message: ""
-    }
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
-    toast({
-      title: "Message sent!",
-      description: "Thanks for reaching out. I'll get back to you soon.",
-    });
-    form.reset();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate sending data
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast({
+        title: "Message sent!",
+        description: "Thank you for reaching out. I'll get back to you soon.",
+      });
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Your message could not be sent. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section id="contact" className="bg-white text-nero-dark section">
+    <section id="contact" className="bg-nero-dark section">
       <div className="section-container">
-        <h2 className="section-title text-nero-dark">Get In Touch</h2>
+        <h2 className="section-title">Get In Touch</h2>
         
-        <div className="flex flex-col md:flex-row gap-12">
-          <div className="md:w-1/2">
-            <h3 className="text-2xl font-semibold mb-6">Let's Connect</h3>
-            <p className="text-gray-700 mb-6">
-              Whether you have a question, project idea, or just want to say hello, 
-              feel free to reach out. I'm always open to discussing new projects, 
-              creative ideas, or opportunities to be part of your vision.
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div>
+            <p className="text-gray-400 mb-8 text-lg">
+              I'm currently open to new opportunities and collaborations. Whether you have a question or just want to say hi, I'll do my best to get back to you!
             </p>
             
-            <div className="space-y-4 mb-8">
+            <div className="space-y-6">
               <div className="flex items-center">
-                <Mail className="w-6 h-6 mr-4 text-nero-accent" />
-                <a href="mailto:nelavalliphanindra4@gmail.com" className="text-gray-700 hover:text-nero-accent transition-colors">
+                <User className="w-5 h-5 text-nero-accent mr-4" />
+                <span>Nelavalli Phanindra</span>
+              </div>
+              <div className="flex items-center">
+                <Mail className="w-5 h-5 text-nero-accent mr-4" />
+                <a href="mailto:nelavalliphanindra4@gmail.com" className="hover:text-nero-accent transition-colors">
                   nelavalliphanindra4@gmail.com
-                </a>
-              </div>
-              <div className="flex items-center">
-                <Github className="w-6 h-6 mr-4 text-nero-accent" />
-                <a href="https://github.com/Phanindra-Nelavalli" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-nero-accent transition-colors">
-                  github.com/Phanindra-Nelavalli
-                </a>
-              </div>
-              <div className="flex items-center">
-                <Linkedin className="w-6 h-6 mr-4 text-nero-accent" />
-                <a href="https://linkedin.com/in/Nelavalli-Phanindra" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-nero-accent transition-colors">
-                  linkedin.com/in/Nelavalli-Phanindra
                 </a>
               </div>
             </div>
           </div>
           
-          <div className="md:w-1/2">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your name" {...field} className="bg-gray-100" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your email" {...field} className="bg-gray-100" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Message</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Your message" 
-                          {...field} 
-                          className="min-h-32 bg-gray-100" 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-nero-dark hover:bg-nero-accent text-white"
-                >
-                  Send Message
-                </Button>
-              </form>
-            </Form>
+          <div>
+            <Card className="bg-white/5 backdrop-blur-sm border-gray-800 text-white">
+              <CardContent className="pt-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm mb-2">Name</label>
+                    <Input 
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Your name"
+                      className="bg-white/10 border-gray-700 focus:border-nero-accent placeholder:text-gray-500"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm mb-2">Email</label>
+                    <Input 
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Your email"
+                      className="bg-white/10 border-gray-700 focus:border-nero-accent placeholder:text-gray-500"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="message" className="block text-sm mb-2">Message</label>
+                    <Textarea 
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="Your message"
+                      className="bg-white/10 border-gray-700 focus:border-nero-accent placeholder:text-gray-500 min-h-[120px]"
+                      required
+                    />
+                  </div>
+                  
+                  <Button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-nero-accent hover:bg-nero-accent-hover text-white w-full"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center">Sending <Send className="ml-2 h-4 w-4 animate-pulse" /></span>
+                    ) : (
+                      <span className="flex items-center">Send Message <ArrowRight className="ml-2 h-4 w-4" /></span>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

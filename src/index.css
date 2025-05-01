@@ -85,12 +85,12 @@
   }
 
   .project-card {
-    @apply relative overflow-hidden group cursor-pointer border-t border-gray-800;
+    @apply relative overflow-hidden cursor-pointer border-t border-gray-800;
   }
   
   .project-card-overlay {
     @apply absolute inset-0 bg-nero-dark bg-opacity-80 flex flex-col justify-center items-start px-8 
-    opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out;
+    opacity-0 transition-opacity duration-300 ease-in-out;
   }
 
   .skill-icon {
@@ -104,6 +104,23 @@
 
 .section {
   @apply py-16;
+}
+
+/* Add group class to HTML elements directly, not in @apply */
+.project-card {
+  @apply relative overflow-hidden cursor-pointer border-t border-gray-800;
+}
+.project-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-top-width: 1px;
+  border-color: rgb(31 41 55);
+}
+
+/* Group hover classes should be used in HTML directly or via group-hover: prefix */
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
 }
 
 /* Custom scrollbar */
