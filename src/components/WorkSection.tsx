@@ -1,4 +1,5 @@
 
+import { motion } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 
 const WorkSection = () => {
@@ -27,17 +28,39 @@ const WorkSection = () => {
   ];
 
   return (
-    <section id="work" className="bg-nero-dark">
+    <section id="work" className="bg-gradient-to-b from-indigo-950 to-slate-900">
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <h2 className="section-title">Selected Work</h2>
+          <motion.h2 
+            className="section-title gradient-text text-center mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            Selected Work
+          </motion.h2>
         </div>
         
-        <div className="divide-y divide-gray-800">
+        <motion.div 
+          className="divide-y divide-gray-800/50"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.7, staggerChildren: 0.3 }}
+          viewport={{ once: true }}
+        >
           {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} />
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: index * 0.2 }}
+              viewport={{ once: true }}
+            >
+              <ProjectCard {...project} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

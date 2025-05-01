@@ -1,16 +1,25 @@
 
+import { motion } from 'framer-motion';
 import { Code2, Database, FileJson, FileCode, PenTool, Laptop } from 'lucide-react';
 
 interface SkillCardProps {
   title: string;
   items: string[];
   icon: React.ReactNode;
+  index: number;
 }
 
-const SkillCard = ({ title, items, icon }: SkillCardProps) => (
-  <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm">
+const SkillCard = ({ title, items, icon, index }: SkillCardProps) => (
+  <motion.div 
+    className="bg-white/5 rounded-lg p-6 backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: index * 0.1 }}
+    viewport={{ once: true }}
+    whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.3)" }}
+  >
     <div className="flex items-center mb-4">
-      <div className="mr-4">{icon}</div>
+      <div className="mr-4 bg-violet-400/20 p-3 rounded-full">{icon}</div>
       <h3 className="text-xl font-semibold">{title}</h3>
     </div>
     <ul className="space-y-2">
@@ -18,7 +27,7 @@ const SkillCard = ({ title, items, icon }: SkillCardProps) => (
         <li key={index} className="text-gray-400">{item}</li>
       ))}
     </ul>
-  </div>
+  </motion.div>
 );
 
 const SkillsSection = () => {
@@ -56,17 +65,26 @@ const SkillsSection = () => {
   ];
 
   return (
-    <section id="skills" className="bg-nero-dark section">
+    <section id="skills" className="bg-gradient-to-b from-slate-900 to-indigo-950 section">
       <div className="section-container">
-        <h2 className="section-title">Skills & Expertise</h2>
+        <motion.h2 
+          className="section-title gradient-text text-center mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          Skills & Expertise
+        </motion.h2>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           {skills.map((skill, index) => (
             <SkillCard
               key={index}
               title={skill.title}
               items={skill.items}
               icon={skill.icon}
+              index={index}
             />
           ))}
         </div>
