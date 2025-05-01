@@ -64,7 +64,7 @@
   }
   
   .section-title {
-    @apply text-3xl md:text-4xl font-bold mb-8 md:mb-12;
+    @apply text-3xl md:text-4xl font-bold mb-8 md:mb-12 inline-block;
   }
   
   .gradient-text {
@@ -96,6 +96,15 @@
   .skill-icon {
     @apply w-10 h-10 text-nero-accent;
   }
+  
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply border-white/20 shadow-lg shadow-nero-accent/10;
+    transform: translateY(-5px);
+  }
 }
 
 .social-icon {
@@ -107,9 +116,6 @@
 }
 
 /* Add group class to HTML elements directly, not in @apply */
-.project-card {
-  @apply relative overflow-hidden cursor-pointer border-t border-gray-800;
-}
 .project-card {
   position: relative;
   overflow: hidden;
@@ -123,7 +129,7 @@
   opacity: 1;
 }
 
-/* Custom scrollbar */
+/* Modern scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -139,4 +145,21 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-nero-accent;
+}
+
+/* Modern animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.float {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Glassmorphism */
+.glass-morphism {
+  @apply backdrop-blur-md bg-white/5 border border-white/10;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }

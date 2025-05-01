@@ -1,4 +1,5 @@
 
+import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
@@ -13,14 +14,20 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-nero-dark text-white overflow-x-hidden">
       <Navbar />
-      <HeroSection />
-      <AboutSection />
-      <WorkSection />
-      <SkillsSection />
-      <CertificatesSection />
-      <AchievementsSection />
-      <ContactSection />
-      <Footer />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <HeroSection />
+        <AboutSection />
+        <WorkSection />
+        <SkillsSection />
+        <CertificatesSection />
+        <AchievementsSection />
+        <ContactSection />
+        <Footer />
+      </motion.div>
     </div>
   );
 };
