@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface NavbarProps {
@@ -25,6 +26,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
   const navLinks = [
     { name: 'About', href: '#about' },
+    { name: 'Experience', href: '#experience' },
     { name: 'Work', href: '#work' },
     { name: 'Skills', href: '#skills' },
     { name: 'Certificates', href: '#certificates' },
@@ -34,31 +36,42 @@ const Navbar = ({ className }: NavbarProps) => {
   const isScrolled = scrollPosition > 20;
 
   return (
-    <nav
+    <motion.nav
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-nero-dark/90 backdrop-blur-md py-4' : 'bg-transparent py-6',
+        isScrolled ? 'bg-indigo-950/90 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6',
         className
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <div className="flex items-center">
+          <motion.div 
+            className="flex items-center"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
+          >
             <Link to="/" className="text-2xl font-bold text-white">
-              PHANINDRA<span className="text-nero-accent">.</span>
+              PHANINDRA<span className="text-violet-400">.</span>
             </Link>
-          </div>
+          </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-10">
-            {navLinks.map((link) => (
-              <a
+            {navLinks.map((link, index) => (
+              <motion.a
                 key={link.name}
                 href={link.href}
                 className="nav-link"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 * index }}
+                whileHover={{ y: -3 }}
               >
                 {link.name}
-              </a>
+              </motion.a>
             ))}
           </div>
 
@@ -66,7 +79,7 @@ const Navbar = ({ className }: NavbarProps) => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="text-white hover:text-nero-accent transition-colors duration-300"
+              className="text-white hover:text-violet-400 transition-colors duration-300"
               aria-label="Toggle menu"
             >
               {isOpen ? (
@@ -85,20 +98,21 @@ const Navbar = ({ className }: NavbarProps) => {
           isOpen ? 'block animate-fade-in' : 'hidden animate-fade-out'
         }`}
       >
-        <div className="px-2 pt-2 pb-4 bg-nero-dark/90 backdrop-blur-md space-y-1 sm:px-3">
+        <div className="px-2 pt-2 pb-4 bg-indigo-950/90 backdrop-blur-md space-y-1 sm:px-3">
           {navLinks.map((link) => (
-            <a
+            <motion.a
               key={link.name}
               href={link.href}
-              className="block px-3 py-4 text-center text-lg font-medium hover:text-nero-accent transition-colors duration-300"
+              className="block px-3 py-4 text-center text-lg font-medium hover:text-violet-400 transition-colors duration-300"
               onClick={() => setIsOpen(false)}
+              whileTap={{ scale: 0.97 }}
             >
               {link.name}
-            </a>
+            </motion.a>
           ))}
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 

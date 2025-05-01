@@ -49,7 +49,7 @@
   }
 
   body {
-    @apply bg-nero-dark text-white;
+    @apply bg-gradient-to-b from-indigo-950 to-slate-900 text-white;
     font-family: 'Inter', sans-serif;
   }
 
@@ -68,16 +68,16 @@
   }
   
   .gradient-text {
-    @apply bg-gradient-to-r from-nero-accent to-nero-accent-hover bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-violet-500 to-fuchsia-400 bg-clip-text text-transparent;
   }
 
   .nav-link {
-    @apply relative hover:text-nero-accent transition-colors duration-300 text-lg;
+    @apply relative hover:text-violet-400 transition-colors duration-300 text-lg;
   }
   
   .nav-link::after {
     content: '';
-    @apply absolute left-0 bottom-0 w-0 h-0.5 bg-nero-accent transition-all duration-300 ease-in-out;
+    @apply absolute left-0 bottom-0 w-0 h-0.5 bg-violet-400 transition-all duration-300 ease-in-out;
   }
   
   .nav-link:hover::after {
@@ -89,12 +89,16 @@
   }
   
   .project-card-overlay {
-    @apply absolute inset-0 bg-nero-dark bg-opacity-80 flex flex-col justify-center items-start px-8 
+    @apply absolute inset-0 bg-indigo-950 bg-opacity-80 flex flex-col justify-center items-start px-8 
     opacity-0 transition-opacity duration-300 ease-in-out;
   }
 
+  .project-card:hover .project-card-overlay {
+    @apply opacity-100;
+  }
+
   .skill-icon {
-    @apply w-10 h-10 text-nero-accent;
+    @apply w-10 h-10 text-violet-400;
   }
   
   .glass-card {
@@ -102,41 +106,31 @@
   }
   
   .glass-card:hover {
-    @apply border-white/20 shadow-lg shadow-nero-accent/10;
+    @apply border-white/20 shadow-lg shadow-violet-500/10;
     transform: translateY(-5px);
+  }
+
+  .hero-gradient {
+    @apply bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900;
   }
 }
 
 .social-icon {
-  @apply w-6 h-6 text-white hover:text-nero-accent transition-colors duration-300;
+  @apply w-6 h-6 text-white hover:text-violet-400 transition-colors duration-300;
 }
 
 .section {
   @apply py-16;
 }
 
-/* Add group class to HTML elements directly, not in @apply */
-.project-card {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  border-top-width: 1px;
-  border-color: rgb(31 41 55);
-}
-
-/* Group hover classes should be used in HTML directly or via group-hover: prefix */
-.group:hover .group-hover\:opacity-100 {
-  opacity: 1;
-}
-
-/* Modern scrollbar */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-nero-dark;
+  @apply bg-indigo-950;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -144,7 +138,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-nero-accent;
+  @apply bg-violet-400;
 }
 
 /* Modern animations */

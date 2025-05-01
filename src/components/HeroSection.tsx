@@ -1,66 +1,154 @@
 
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Github, Linkedin, Mail, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const HeroSection = () => {
   return (
-    <section id="home" className="min-h-screen flex items-center bg-nero-dark pt-20">
+    <section id="home" className="min-h-screen flex items-center hero-gradient pt-20">
       <div className="section-container">
-        <div className="max-w-4xl">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 animate-fade-in">
-            Nelavalli Phanindra
-          </h1>
-          
-          <h2 className="text-2xl md:text-3xl font-light mb-8 text-gray-300 animate-fade-in" style={{ animationDelay: "200ms" }}>
-            Building <span className="gradient-text">real-world tech</span> for real-world impact.
-          </h2>
-          
-          <p className="text-xl text-gray-400 mb-10 max-w-2xl animate-fade-in" style={{ animationDelay: "400ms" }}>
-            Computer Science Engineering student passionate about AI, ML, 
-            and mobile development. Turning innovative ideas into impactful solutions.
-          </p>
-          
-          <div className="flex flex-wrap gap-4 mb-12 animate-fade-in" style={{ animationDelay: "600ms" }}>
-            <Button 
-              asChild 
-              className="bg-white text-nero-dark hover:bg-nero-accent hover:text-white transition-colors duration-300"
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          <motion.div 
+            className="md:w-1/2 mb-12 md:mb-0"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.h1 
+              className="text-5xl md:text-7xl font-bold mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <a href="#contact">Get in Touch</a>
-            </Button>
+              Nelavalli <span className="gradient-text">Phanindra</span>
+            </motion.h1>
             
-            <Button 
-              variant="outline" 
-              className="border-white text-white hover:bg-white/10 transition-colors duration-300"
-              asChild
+            <motion.h2 
+              className="text-2xl md:text-3xl font-light mb-8 text-gray-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">View Resume</a>
-            </Button>
-          </div>
+              Building <span className="gradient-text">real-world tech</span> for real-world impact.
+            </motion.h2>
+            
+            <motion.p 
+              className="text-xl text-gray-400 mb-10 max-w-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              Computer Science Engineering student passionate about AI, ML, 
+              and mobile development. Turning innovative ideas into impactful solutions.
+            </motion.p>
+            
+            <motion.div 
+              className="flex flex-wrap gap-4 mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+              <Button 
+                asChild 
+                className="bg-violet-500 text-white hover:bg-violet-600 transition-colors duration-300"
+              >
+                <a href="#contact">Get in Touch</a>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="border-white text-white hover:bg-white/10 transition-colors duration-300"
+                asChild
+              >
+                <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">View Resume</a>
+              </Button>
+            </motion.div>
+            
+            <motion.div 
+              className="flex space-x-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.0 }}
+            >
+              <a 
+                href="https://github.com/Phanindra-Nelavalli" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="GitHub Profile"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <Github className="social-icon" />
+              </a>
+              <a 
+                href="https://linkedin.com/in/Nelavalli-Phanindra" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="LinkedIn Profile"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <Linkedin className="social-icon" />
+              </a>
+              <a 
+                href="https://instagram.com/phanindra_nelavalli" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Instagram Profile"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <Instagram className="social-icon" />
+              </a>
+              <a 
+                href="mailto:nelavalliphanindra4@gmail.com" 
+                aria-label="Email Me"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <Mail className="social-icon" />
+              </a>
+            </motion.div>
+          </motion.div>
           
-          <div className="flex space-x-6 animate-fade-in" style={{ animationDelay: "800ms" }}>
-            <a 
-              href="https://github.com/Phanindra-Nelavalli" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="GitHub Profile"
-            >
-              <Github className="social-icon" />
-            </a>
-            <a 
-              href="https://linkedin.com/in/Nelavalli-Phanindra" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="LinkedIn Profile"
-            >
-              <Linkedin className="social-icon" />
-            </a>
-            <a 
-              href="mailto:nelavalliphanindra4@gmail.com" 
-              aria-label="Email Me"
-            >
-              <Mail className="social-icon" />
-            </a>
-          </div>
+          <motion.div 
+            className="md:w-2/5 flex justify-center md:justify-end"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="relative">
+              <motion.div 
+                className="w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 float rounded-full overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="w-full h-full bg-gradient-to-br from-violet-500 to-fuchsia-500 p-1 rounded-full">
+                  <Avatar className="w-full h-full rounded-full">
+                    <AvatarImage src="https://avatars.githubusercontent.com/u/157562857?v=4" alt="Phanindra" className="object-cover" />
+                    <AvatarFallback className="bg-slate-800 text-3xl">NP</AvatarFallback>
+                  </Avatar>
+                </div>
+              </motion.div>
+              
+              <div className="absolute -bottom-4 right-0 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl">
+                <motion.span 
+                  className="text-white font-bold"
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: [0.9, 1.1, 1] }}
+                  transition={{ duration: 0.5, delay: 1.2 }}
+                >
+                  CGPA: <span className="text-violet-400">9.42</span>
+                </motion.span>
+              </div>
+              
+              <motion.div 
+                className="absolute -top-6 -left-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.4, type: "spring" }}
+              >
+                <span className="text-white font-medium">Developer</span>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

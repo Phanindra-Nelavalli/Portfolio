@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
+import ExperienceSection from '@/components/ExperienceSection';
 import WorkSection from '@/components/WorkSection';
 import SkillsSection from '@/components/SkillsSection';
 import CertificatesSection from '@/components/CertificatesSection';
@@ -12,7 +13,7 @@ import Footer from '@/components/Footer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-nero-dark text-white overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
       <motion.div
         initial={{ opacity: 0 }}
@@ -21,6 +22,7 @@ const Index = () => {
       >
         <HeroSection />
         <AboutSection />
+        <ExperienceSection />
         <WorkSection />
         <SkillsSection />
         <CertificatesSection />
