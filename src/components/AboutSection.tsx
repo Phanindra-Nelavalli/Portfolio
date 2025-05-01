@@ -12,7 +12,7 @@ const AboutSection = () => {
             <div className="relative">
               <div className="w-64 h-64 rounded-full overflow-hidden bg-gradient-to-r from-nero-accent/20 to-nero-accent-hover/20 p-1">
                 <Avatar className="w-full h-full">
-                  <AvatarImage src="public/lovable-uploads/f05cf027-74de-472a-94b4-a42f8445e084.png" alt="Phanindra" className="object-cover" />
+                  <AvatarImage src="https://avatars.githubusercontent.com/u/157562857?v=4" alt="Phanindra" className="object-cover" />
                   <AvatarFallback className="bg-gray-800 text-xl">NP</AvatarFallback>
                 </Avatar>
               </div>
