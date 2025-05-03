@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import FileUpload from "./FileUpload";
 
 const AdminAboutForm = () => {
   const [aboutData, setAboutData] = useState({
@@ -70,6 +71,13 @@ const AdminAboutForm = () => {
       setLoading(false);
     }
   };
+  
+  const handleImageUpload = (url: string) => {
+    setAboutData(prev => ({
+      ...prev,
+      imageUrl: url
+    }));
+  };
 
   if (fetchLoading) {
     return <div>Loading about data...</div>;
@@ -114,13 +122,11 @@ const AdminAboutForm = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Image URL</Label>
-            <Input
-              id="imageUrl"
-              name="imageUrl"
-              value={aboutData.imageUrl}
-              onChange={handleInputChange}
-              placeholder="https://example.com/your-image.jpg"
+            <Label>Profile Image</Label>
+            <FileUpload 
+              onFileUpload={handleImageUpload} 
+              currentImageUrl={aboutData.imageUrl}
+              folder="about"
             />
           </div>
           

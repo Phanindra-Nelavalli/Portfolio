@@ -117,7 +117,7 @@ const AdminSkillsForm = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Add New Skill</CardTitle>
+          <CardTitle>Add New Skill</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddSkill} className="space-y-4">

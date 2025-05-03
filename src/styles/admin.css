@@ -10,15 +10,15 @@
 }
 
 .admin-label {
-  @apply text-white text-sm font-medium;
+  @apply text-gray-800 text-sm font-medium;
 }
 
 .admin-input {
-  @apply bg-white/10 border-white/20 text-white placeholder:text-gray-400 w-full rounded-md px-3 py-2 focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50 focus:border-transparent;
+  @apply bg-white border border-gray-300 text-gray-800 placeholder:text-gray-500 w-full rounded-md px-3 py-2 focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50 focus:border-transparent;
 }
 
 .admin-textarea {
-  @apply bg-white/10 border-white/20 text-white placeholder:text-gray-400 w-full rounded-md px-3 py-2 min-h-[100px] focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50 focus:border-transparent;
+  @apply bg-white border border-gray-300 text-gray-800 placeholder:text-gray-500 w-full rounded-md px-3 py-2 min-h-[100px] focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50 focus:border-transparent;
 }
 
 .admin-button-primary {
@@ -26,7 +26,7 @@
 }
 
 .admin-button-secondary {
-  @apply bg-transparent border border-white/20 hover:bg-white/10 text-white py-2 rounded-md transition-colors;
+  @apply bg-transparent border border-gray-300 hover:bg-gray-100 text-gray-800 py-2 rounded-md transition-colors;
 }
 
 .admin-button-danger {
@@ -34,15 +34,15 @@
 }
 
 .admin-card {
-  @apply bg-gradient-to-br from-white/10 to-white/5 text-white backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden transition-all;
+  @apply bg-white text-gray-800 shadow-md rounded-lg overflow-hidden transition-all;
 }
 
 .admin-card-header {
-  @apply p-4 border-b border-white/10;
+  @apply p-4 border-b border-gray-200;
 }
 
 .admin-card-title {
-  @apply text-xl font-semibold text-white;
+  @apply text-xl font-semibold text-gray-800;
 }
 
 .admin-card-body {
@@ -50,15 +50,15 @@
 }
 
 .admin-tabs-list {
-  @apply bg-white/10 backdrop-blur-sm border border-white/10 rounded-md overflow-hidden;
+  @apply bg-white shadow-sm border border-gray-200 rounded-md overflow-hidden;
 }
 
 .admin-tab {
-  @apply text-gray-300 transition-all duration-300;
+  @apply text-gray-600 transition-all duration-300;
 }
 
 .admin-tab-active {
-  @apply text-violet-400 bg-violet-400/10;
+  @apply text-violet-600 bg-violet-50;
 }
 
 .admin-table {
@@ -66,7 +66,7 @@
 }
 
 .admin-table-header {
-  @apply bg-white/10 text-gray-300;
+  @apply bg-gray-50 text-gray-700;
 }
 
 .admin-table-header-cell {
@@ -74,7 +74,7 @@
 }
 
 .admin-table-cell {
-  @apply px-4 py-2 border-t border-white/10;
+  @apply px-4 py-2 border-t border-gray-200;
 }
 
 .admin-loading {
@@ -86,5 +86,33 @@
 }
 
 .admin-badge {
-  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-violet-400/20 text-violet-300;
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-violet-100 text-violet-800;
+}
+
+.file-upload-container {
+  @apply relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors;
+}
+
+.file-upload-container.dragging {
+  @apply border-violet-400 bg-violet-50;
+}
+
+.file-upload-input {
+  @apply absolute inset-0 w-full h-full opacity-0 cursor-pointer;
+}
+
+.file-upload-preview {
+  @apply mt-4 rounded-md overflow-hidden border border-gray-200;
+}
+
+.file-upload-progress {
+  @apply w-full bg-gray-200 rounded-full h-2.5 mt-2;
+}
+
+.file-upload-progress-bar {
+  @apply bg-violet-500 h-2.5 rounded-full transition-all duration-500;
+}
+
+.text-highlight-selector {
+  @apply flex items-center space-x-2 mt-2 p-2 border border-gray-200 rounded-md;
 }

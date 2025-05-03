@@ -16,6 +16,7 @@ import AdminCertificatesForm from "@/components/Admin/AdminCertificatesForm";
 import AdminAchievementsForm from "@/components/Admin/AdminAchievementsForm";
 import AdminHeroForm from "@/components/Admin/AdminHeroForm";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
+import "../styles/admin.css";
 
 const AdminDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -64,28 +65,28 @@ const AdminDashboard = () => {
   return (
     <PortfolioProvider>
       <div className="min-h-screen bg-gradient-to-r from-indigo-950 to-purple-900 p-4 md:p-8">
-        <Card className="bg-gradient-to-br from-white/10 to-white/5 text-white backdrop-blur-sm border border-white/10">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-white">Admin Dashboard</CardTitle>
-            <Button onClick={handleSignOut} variant="outline" className="border-white/20 text-white hover:bg-white/10">
+        <Card className="shadow-xl">
+          <CardHeader className="flex flex-row items-center justify-between border-b">
+            <CardTitle>Portfolio Admin Dashboard</CardTitle>
+            <Button onClick={handleSignOut} variant="outline">
               Sign Out
             </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="mb-6">
-              <p className="text-gray-300">Logged in as: {user?.email}</p>
+              <p className="text-gray-600">Logged in as: {user?.email}</p>
             </div>
-            <Separator className="my-4 bg-white/20" />
+            <Separator className="my-4" />
             
             <Tabs defaultValue="hero">
-              <TabsList className="grid grid-cols-2 md:grid-cols-7 mb-6 bg-white/10 border border-white/10">
-                <TabsTrigger value="hero" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">Hero</TabsTrigger>
-                <TabsTrigger value="about" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">About</TabsTrigger>
-                <TabsTrigger value="experience" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">Experience</TabsTrigger>
-                <TabsTrigger value="projects" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">Projects</TabsTrigger>
-                <TabsTrigger value="skills" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">Skills</TabsTrigger>
-                <TabsTrigger value="certificates" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">Certificates</TabsTrigger>
-                <TabsTrigger value="achievements" className="text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10">Achievements</TabsTrigger>
+              <TabsList className="grid grid-cols-2 md:grid-cols-7 mb-6 bg-gray-50">
+                <TabsTrigger value="hero">Hero</TabsTrigger>
+                <TabsTrigger value="about">About</TabsTrigger>
+                <TabsTrigger value="experience">Experience</TabsTrigger>
+                <TabsTrigger value="projects">Projects</TabsTrigger>
+                <TabsTrigger value="skills">Skills</TabsTrigger>
+                <TabsTrigger value="certificates">Certificates</TabsTrigger>
+                <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
               
               <TabsContent value="hero">

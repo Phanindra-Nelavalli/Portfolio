@@ -7,6 +7,74 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { usePortfolio, HeroType } from "@/contexts/PortfolioContext";
+import FileUpload from "./FileUpload";
+
+interface HighlightableTextProps {
+  text: string;
+  onUpdate: (highlightedText: string) => void;
+  highlightedClass?: string;
+}
+
+const HighlightableText = ({ text, onUpdate, highlightedClass = "text-violet-500" }: HighlightableTextProps) => {
+  const [words, setWords] = useState<Array<{ text: string; highlighted: boolean }>>(
+    text.split(' ').map(word => ({ text: word, highlighted: word.includes('<span') }))
+  );
+
+  // Parse initial highlighted text
+  useEffect(() => {
+    if (!text) return;
+
+    // Simple HTML tag detection
+    if (text.includes('<span')) {
+      const processedText = text.replace(/<span[^>]*>(.*?)<\/span>/g, (match, content) => {
+        return `${content}[HIGHLIGHTED]`;
+      });
+      
+      setWords(
+        processedText.split(' ').map(word => ({
+          text: word.replace('[HIGHLIGHTED]', ''),
+          highlighted: word.includes('[HIGHLIGHTED]')
+        }))
+      );
+    } else {
+      setWords(text.split(' ').map(word => ({ text: word, highlighted: false })));
+    }
+  }, [text]);
+
+  const toggleHighlight = (index: number) => {
+    const newWords = [...words];
+    newWords[index].highlighted = !newWords[index].highlighted;
+    setWords(newWords);
+    
+    // Generate the updated text with highlighting
+    const updatedText = newWords.map(word => 
+      word.highlighted 
+        ? `<span class="gradient-text">${word.text}</span>` 
+        : word.text
+    ).join(' ');
+    
+    onUpdate(updatedText);
+  };
+
+  return (
+    <div className="mt-2 p-3 border rounded-md bg-gray-50">
+      <p className="mb-2 text-sm text-gray-500">Click on words to highlight/unhighlight them:</p>
+      <div className="flex flex-wrap gap-1">
+        {words.map((word, index) => (
+          <span
+            key={index}
+            className={`cursor-pointer px-1 py-0.5 rounded ${
+              word.highlighted ? `${highlightedClass} font-medium` : 'text-gray-800'
+            }`}
+            onClick={() => toggleHighlight(index)}
+          >
+            {word.text}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const AdminHeroForm = () => {
   const { hero, updateHero, loading } = usePortfolio();
@@ -77,26 +145,57 @@ const AdminHeroForm = () => {
     }
   };
 
+  const handleFileUpload = (url: string) => {
+    setFormData({
+      ...formData,
+      imageUrl: url
+    });
+  };
+  
+  const handleResumeUpload = (url: string) => {
+    setFormData({
+      ...formData,
+      resumeUrl: url
+    });
+  };
+
+  const handleHighlightedName = (highlightedText: string) => {
+    setFormData({
+      ...formData,
+      name: highlightedText
+    });
+  };
+  
+  const handleHighlightedSubtitle = (highlightedText: string) => {
+    setFormData({
+      ...formData,
+      subtitle: highlightedText
+    });
+  };
+
   if (loading.hero) {
     return <div className="p-4 text-center">Loading hero data...</div>;
   }
 
   return (
-    <Card className="bg-gradient-to-br from-white/10 to-white/5 text-white backdrop-blur-sm border border-white/10">
+    <Card>
       <CardHeader>
         <CardTitle>Edit Hero Section</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               name="name"
-              value={formData.name}
+              value={formData.name.replace(/<[^>]*>/g, '')}
               onChange={handleChange}
               placeholder="Enter your name"
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+            />
+            <HighlightableText 
+              text={formData.name} 
+              onUpdate={handleHighlightedName}
             />
           </div>
           
@@ -105,10 +204,13 @@ const AdminHeroForm = () => {
             <Input
               id="subtitle"
               name="subtitle"
-              value={formData.subtitle}
+              value={formData.subtitle.replace(/<[^>]*>/g, '')}
               onChange={handleChange}
               placeholder="Enter a catchy subtitle"
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+            />
+            <HighlightableText 
+              text={formData.subtitle} 
+              onUpdate={handleHighlightedSubtitle}
             />
           </div>
           
@@ -120,31 +222,26 @@ const AdminHeroForm = () => {
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter a brief description about yourself"
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 min-h-[100px]"
+              rows={4}
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Profile Image URL</Label>
-            <Input
-              id="imageUrl"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              placeholder="Enter profile image URL"
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+            <Label>Profile Image</Label>
+            <FileUpload 
+              onFileUpload={handleFileUpload} 
+              currentImageUrl={formData.imageUrl}
+              folder="profile"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="resumeUrl">Resume URL</Label>
-            <Input
-              id="resumeUrl"
-              name="resumeUrl"
-              value={formData.resumeUrl}
-              onChange={handleChange}
-              placeholder="Enter resume URL"
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+            <Label>Resume</Label>
+            <FileUpload 
+              onFileUpload={handleResumeUpload} 
+              currentImageUrl={formData.resumeUrl}
+              folder="resume"
+              accept=".pdf,.doc,.docx"
             />
           </div>
           
@@ -156,66 +253,63 @@ const AdminHeroForm = () => {
               value={formData.cgpa}
               onChange={handleChange}
               placeholder="Enter your CGPA"
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
             />
           </div>
           
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold mb-2">Social Links</h3>
+          <div className="space-y-4">
+            <h3 className="text-base font-semibold">Social Links</h3>
             
-            <div className="space-y-2">
-              <Label htmlFor="socialLinks.github">GitHub</Label>
-              <Input
-                id="socialLinks.github"
-                name="socialLinks.github"
-                value={formData.socialLinks.github}
-                onChange={handleChange}
-                placeholder="Enter GitHub profile URL"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="socialLinks.linkedin">LinkedIn</Label>
-              <Input
-                id="socialLinks.linkedin"
-                name="socialLinks.linkedin"
-                value={formData.socialLinks.linkedin}
-                onChange={handleChange}
-                placeholder="Enter LinkedIn profile URL"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="socialLinks.instagram">Instagram</Label>
-              <Input
-                id="socialLinks.instagram"
-                name="socialLinks.instagram"
-                value={formData.socialLinks.instagram}
-                onChange={handleChange}
-                placeholder="Enter Instagram profile URL"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="socialLinks.email">Email</Label>
-              <Input
-                id="socialLinks.email"
-                name="socialLinks.email"
-                value={formData.socialLinks.email}
-                onChange={handleChange}
-                placeholder="Enter email address"
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="socialLinks.github">GitHub</Label>
+                <Input
+                  id="socialLinks.github"
+                  name="socialLinks.github"
+                  value={formData.socialLinks.github}
+                  onChange={handleChange}
+                  placeholder="Enter GitHub profile URL"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="socialLinks.linkedin">LinkedIn</Label>
+                <Input
+                  id="socialLinks.linkedin"
+                  name="socialLinks.linkedin"
+                  value={formData.socialLinks.linkedin}
+                  onChange={handleChange}
+                  placeholder="Enter LinkedIn profile URL"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="socialLinks.instagram">Instagram</Label>
+                <Input
+                  id="socialLinks.instagram"
+                  name="socialLinks.instagram"
+                  value={formData.socialLinks.instagram}
+                  onChange={handleChange}
+                  placeholder="Enter Instagram profile URL"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="socialLinks.email">Email</Label>
+                <Input
+                  id="socialLinks.email"
+                  name="socialLinks.email"
+                  value={formData.socialLinks.email}
+                  onChange={handleChange}
+                  placeholder="Enter email address"
+                />
+              </div>
             </div>
           </div>
           
           <Button 
             type="submit" 
-            disabled={isSubmitting} 
-            className="w-full bg-violet-500 hover:bg-violet-600 text-white"
+            disabled={isSubmitting}
+            className="w-full"
           >
             {isSubmitting ? "Updating..." : "Update Hero Section"}
           </Button>

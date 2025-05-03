@@ -12,6 +12,9 @@ import AdminLogin from "./pages/Admin/Login";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 
+// Import styles for admin panel
+import "./styles/admin.css";
+
 const queryClient = new QueryClient();
 
 const App = () => (

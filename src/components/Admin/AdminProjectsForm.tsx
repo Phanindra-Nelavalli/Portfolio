@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Trash2 } from "lucide-react";
+import FileUpload from "./FileUpload";
 
 interface Project {
   id?: string;
@@ -116,6 +117,13 @@ const AdminProjectsForm = () => {
     }
   };
 
+  const handleImageUpload = (url: string) => {
+    setNewProject(prev => ({
+      ...prev,
+      imageUrl: url
+    }));
+  };
+
   if (fetchLoading) {
     return <div>Loading project data...</div>;
   }
@@ -124,33 +132,28 @@ const AdminProjectsForm = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Add New Project</CardTitle>
+          <CardTitle>Add New Project</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddProject} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Project Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={newProject.title}
-                  onChange={handleInputChange}
-                  placeholder="My Project"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="imageUrl">Image URL</Label>
-                <Input
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={newProject.imageUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="title">Project Title</Label>
+              <Input
+                id="title"
+                name="title"
+                value={newProject.title}
+                onChange={handleInputChange}
+                placeholder="My Project"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Project Image</Label>
+              <FileUpload 
+                onFileUpload={handleImageUpload}
+                folder="projects"
+              />
             </div>
             
             <div className="space-y-2">
