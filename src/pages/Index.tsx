@@ -31,8 +31,8 @@ const Index = () => {
           <ExperienceSection />
           <WorkSection />
           <SkillsSection />
-          <CertificatesSection />
           <AchievementsSection />
+          <CertificatesSection />
           <ContactSection />
           <Footer />
         </motion.div>
