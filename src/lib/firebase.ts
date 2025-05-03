@@ -13,7 +13,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "your-app-id"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+
+// Only initialize storage if the storage bucket is configured
+export const storage = firebaseConfig.storageBucket ? getStorage(app) : null;
+
+// Export the app instance
+export default app;

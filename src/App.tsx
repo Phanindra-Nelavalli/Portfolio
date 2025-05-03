@@ -13,7 +13,7 @@ import AdminDashboard from "./pages/Admin/Dashboard";
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 
 // Import styles for admin panel
-import "./styles/admin.css";
+import "@/styles/admin.css"; // Updated import path to use the @ alias
 
 const queryClient = new QueryClient();
 

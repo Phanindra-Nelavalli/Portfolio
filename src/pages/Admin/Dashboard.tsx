@@ -16,7 +16,7 @@ import AdminCertificatesForm from "@/components/Admin/AdminCertificatesForm";
 import AdminAchievementsForm from "@/components/Admin/AdminAchievementsForm";
 import AdminHeroForm from "@/components/Admin/AdminHeroForm";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
-import "../styles/admin.css";
+import "@/styles/admin.css"; // Updated import path to use the @ alias
 
 const AdminDashboard = () => {
   const [user, setUser] = useState<any>(null);
