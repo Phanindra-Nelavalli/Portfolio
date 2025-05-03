@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Cloud, ExternalLink, Award, Certificate, BadgeCheck } from 'lucide-react';
+import { Shield, Cloud, ExternalLink, Award, BadgeCheck } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,7 +42,7 @@ const CertificateCard = ({ title, issuer, date, icon, credentialId, index, categ
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-indigo-900/30">
-              <Certificate className="w-16 h-16 text-violet-400/50" />
+              <Award className="w-16 h-16 text-violet-400/50" />
             </div>
           )}
         </div>
