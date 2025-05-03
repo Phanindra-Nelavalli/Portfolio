@@ -1,48 +1,44 @@
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { motion } from "framer-motion";
 import ProjectCard from "./ProjectCard";
 
+interface Project {
+  id?: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  imageUrl: string;
+  technologies: string; // stored as comma-separated string
+  demoLink: string;
+  githubLink: string;
+}
+
 const WorkSection = () => {
-  const projects = [
-    {
-      title: "Sign Bridge",
-      subtitle: "Indian Sign Language Translator",
-      description:
-        "A cross-platform mobile app using Flutter to convert voice input to Indian Sign Language (ISL) visuals, serving 100+ users in the testing phase with 85% accuracy in voice-to-sign language conversion.",
-      technologies: [
-        "Flutter",
-        "Firebase",
-        "Machine Learning",
-        "BERT",
-        "Transformers",
-      ],
-      imageUrl:
-        "https://images.unsplash.com/photo-1508780709619-79562169bc64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    },
-    {
-      title: "Lexica AR",
-      subtitle: "Immersive AR learning app",
-      description:
-        "An augmented reality educational tool that engages 200+ students with AR features to simplify complex concepts, featuring personalized learning paths and improved student comprehension by 40%.",
-      technologies: ["React Native", "ViroReact", "Firebase", "AR Models"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1626379953822-baec19c3accd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    },
-    {
-      title: "E-CELL Website",
-      subtitle: "3D startup visualization platform",
-      description:
-        "Developed and maintained the E-CELL website, supporting 500+ monthly users with entrepreneurship resources and event access, featuring 3D visualizations of startups to increase engagement.",
-      technologies: [
-        "React.js",
-        "Three.js",
-        "Firebase",
-        "Node.js",
-        "Express.js",
-      ],
-      imageUrl:
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2015&q=80",
-    },
-  ];
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "projects"));
+        const projectList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Project[];
+        setProjects(projectList);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) return <div className="text-center text-white py-10">Loading projects...</div>;
 
   return (
     <section
@@ -71,13 +67,25 @@ const WorkSection = () => {
         >
           {projects.map((project, index) => (
             <motion.div
-              key={index}
+              key={project.id || index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: index * 0.2 }}
               viewport={{ once: true }}
             >
-              <ProjectCard {...project} />
+              <ProjectCard
+                title={project.title}
+                subtitle={project.subtitle}
+                description={project.description}
+                imageUrl={project.imageUrl}
+                technologies={
+                  project.technologies
+                    ? project.technologies.split(",").map((tech) => tech.trim())
+                    : []
+                }
+                githubUrl={project.githubLink}
+                liveDemoUrl={project.demoLink}
+              />
             </motion.div>
           ))}
         </motion.div>

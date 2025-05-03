@@ -44,6 +44,7 @@ export interface ExperienceType {
 export interface ProjectType {
   id?: string;
   title: string;
+  subtitle: string;
   description: string;
   technologies: string[];
   imageUrl?: string;
