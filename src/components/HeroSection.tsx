@@ -3,8 +3,33 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { usePortfolio } from '@/contexts/PortfolioContext';
 
 const HeroSection = () => {
+  const { hero, loading } = usePortfolio();
+
+  // Default values if no hero data is available
+  const name = hero?.name || "Nelavalli Phanindra";
+  const subtitle = hero?.subtitle || "Building real-world tech for real-world impact.";
+  const description = hero?.description || "Computer Science Engineering student passionate about AI, ML, and mobile development. Turning innovative ideas into impactful solutions.";
+  const imageUrl = hero?.imageUrl || "https://avatars.githubusercontent.com/u/157562857?v=4";
+  const resumeUrl = hero?.resumeUrl || "/resume.pdf";
+  const socialLinks = hero?.socialLinks || {
+    github: "https://github.com/Phanindra-Nelavalli",
+    linkedin: "https://linkedin.com/in/Nelavalli-Phanindra",
+    instagram: "https://instagram.com/phanindra_nelavalli",
+    email: "mailto:nelavalliphanindra4@gmail.com"
+  };
+  const cgpa = hero?.cgpa || "9.42";
+
+  if (loading.hero) {
+    return (
+      <section id="home" className="min-h-screen flex items-center justify-center hero-gradient pt-20">
+        <div className="text-white text-xl">Loading...</div>
+      </section>
+    );
+  }
+
   return (
     <section id="home" className="min-h-screen flex items-center hero-gradient pt-20">
       <div className="section-container">
@@ -21,7 +46,9 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Nelavalli <span className="gradient-text">Phanindra</span>
+              {name.split(' ').map((part, index) => (
+                index === 0 ? part : <span key={index} className="gradient-text"> {part}</span>
+              ))}
             </motion.h1>
             
             <motion.h2 
@@ -29,9 +56,10 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              Building <span className="gradient-text">real-world tech</span> for real-world impact.
-            </motion.h2>
+              dangerouslySetInnerHTML={{ 
+                __html: subtitle.replace(/real-world tech/g, '<span class="gradient-text">real-world tech</span>')
+              }}
+            />
             
             <motion.p 
               className="text-xl text-gray-400 mb-10 max-w-2xl"
@@ -39,8 +67,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              Computer Science Engineering student passionate about AI, ML, 
-              and mobile development. Turning innovative ideas into impactful solutions.
+              {description}
             </motion.p>
             
             <motion.div 
@@ -61,7 +88,7 @@ const HeroSection = () => {
                 className="border-white text-white hover:bg-white/10 transition-colors duration-300"
                 asChild
               >
-                <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">View Resume</a>
+                <a href={resumeUrl} target="_blank" rel="noopener noreferrer">View Resume</a>
               </Button>
             </motion.div>
             
@@ -71,40 +98,51 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.0 }}
             >
-              <a 
-                href="https://github.com/Phanindra-Nelavalli" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                aria-label="GitHub Profile"
-                className="hover:scale-110 transition-transform duration-300"
-              >
-                <Github className="social-icon" />
-              </a>
-              <a 
-                href="https://linkedin.com/in/Nelavalli-Phanindra" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                aria-label="LinkedIn Profile"
-                className="hover:scale-110 transition-transform duration-300"
-              >
-                <Linkedin className="social-icon" />
-              </a>
-              <a 
-                href="https://instagram.com/phanindra_nelavalli" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                aria-label="Instagram Profile"
-                className="hover:scale-110 transition-transform duration-300"
-              >
-                <Instagram className="social-icon" />
-              </a>
-              <a 
-                href="mailto:nelavalliphanindra4@gmail.com" 
-                aria-label="Email Me"
-                className="hover:scale-110 transition-transform duration-300"
-              >
-                <Mail className="social-icon" />
-              </a>
+              {socialLinks.github && (
+                <a 
+                  href={socialLinks.github} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="GitHub Profile"
+                  className="hover:scale-110 transition-transform duration-300"
+                >
+                  <Github className="social-icon" />
+                </a>
+              )}
+              
+              {socialLinks.linkedin && (
+                <a 
+                  href={socialLinks.linkedin} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn Profile"
+                  className="hover:scale-110 transition-transform duration-300"
+                >
+                  <Linkedin className="social-icon" />
+                </a>
+              )}
+              
+              {socialLinks.instagram && (
+                <a 
+                  href={socialLinks.instagram} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="Instagram Profile"
+                  className="hover:scale-110 transition-transform duration-300"
+                >
+                  <Instagram className="social-icon" />
+                </a>
+              )}
+              
+              {socialLinks.email && (
+                <a 
+                  href={socialLinks.email} 
+                  aria-label="Email Me"
+                  className="hover:scale-110 transition-transform duration-300"
+                >
+                  <Mail className="social-icon" />
+                </a>
+              )}
             </motion.div>
           </motion.div>
           
@@ -122,22 +160,26 @@ const HeroSection = () => {
               >
                 <div className="w-full h-full bg-gradient-to-br from-violet-500 to-fuchsia-500 p-1 rounded-full">
                   <Avatar className="w-full h-full rounded-full">
-                    <AvatarImage src="https://avatars.githubusercontent.com/u/157562857?v=4" alt="Phanindra" className="object-cover" />
-                    <AvatarFallback className="bg-slate-800 text-3xl">NP</AvatarFallback>
+                    <AvatarImage src={imageUrl} alt="Profile" className="object-cover" />
+                    <AvatarFallback className="bg-slate-800 text-3xl">
+                      {name.split(' ').map(part => part[0]).join('')}
+                    </AvatarFallback>
                   </Avatar>
                 </div>
               </motion.div>
               
-              <div className="absolute -bottom-4 right-0 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl">
-                <motion.span 
-                  className="text-white font-bold"
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: [0.9, 1.1, 1] }}
-                  transition={{ duration: 0.5, delay: 1.2 }}
-                >
-                  CGPA: <span className="text-violet-400">9.42</span>
-                </motion.span>
-              </div>
+              {cgpa && (
+                <div className="absolute -bottom-4 right-0 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl">
+                  <motion.span 
+                    className="text-white font-bold"
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: [0.9, 1.1, 1] }}
+                    transition={{ duration: 0.5, delay: 1.2 }}
+                  >
+                    CGPA: <span className="text-violet-400">{cgpa}</span>
+                  </motion.span>
+                </div>
+              )}
               
               <motion.div 
                 className="absolute -top-6 -left-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl"

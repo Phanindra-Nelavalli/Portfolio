@@ -1,0 +1,90 @@
+
+/* Admin Panel Specific Styles */
+
+.admin-form-container {
+  @apply space-y-6;
+}
+
+.admin-form-group {
+  @apply space-y-2;
+}
+
+.admin-label {
+  @apply text-white text-sm font-medium;
+}
+
+.admin-input {
+  @apply bg-white/10 border-white/20 text-white placeholder:text-gray-400 w-full rounded-md px-3 py-2 focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50 focus:border-transparent;
+}
+
+.admin-textarea {
+  @apply bg-white/10 border-white/20 text-white placeholder:text-gray-400 w-full rounded-md px-3 py-2 min-h-[100px] focus:ring-2 focus:ring-violet-400 focus:ring-opacity-50 focus:border-transparent;
+}
+
+.admin-button-primary {
+  @apply bg-violet-500 hover:bg-violet-600 text-white w-full py-2 rounded-md transition-colors;
+}
+
+.admin-button-secondary {
+  @apply bg-transparent border border-white/20 hover:bg-white/10 text-white py-2 rounded-md transition-colors;
+}
+
+.admin-button-danger {
+  @apply bg-red-500 hover:bg-red-600 text-white py-2 rounded-md transition-colors;
+}
+
+.admin-card {
+  @apply bg-gradient-to-br from-white/10 to-white/5 text-white backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden transition-all;
+}
+
+.admin-card-header {
+  @apply p-4 border-b border-white/10;
+}
+
+.admin-card-title {
+  @apply text-xl font-semibold text-white;
+}
+
+.admin-card-body {
+  @apply p-4;
+}
+
+.admin-tabs-list {
+  @apply bg-white/10 backdrop-blur-sm border border-white/10 rounded-md overflow-hidden;
+}
+
+.admin-tab {
+  @apply text-gray-300 transition-all duration-300;
+}
+
+.admin-tab-active {
+  @apply text-violet-400 bg-violet-400/10;
+}
+
+.admin-table {
+  @apply w-full text-left;
+}
+
+.admin-table-header {
+  @apply bg-white/10 text-gray-300;
+}
+
+.admin-table-header-cell {
+  @apply px-4 py-3 font-medium;
+}
+
+.admin-table-cell {
+  @apply px-4 py-2 border-t border-white/10;
+}
+
+.admin-loading {
+  @apply flex justify-center items-center p-10;
+}
+
+.admin-form-submit {
+  @apply mt-8;
+}
+
+.admin-badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-violet-400/20 text-violet-300;
+}

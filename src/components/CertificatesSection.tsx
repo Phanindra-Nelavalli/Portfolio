@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { usePortfolio, CertificateType } from '@/contexts/PortfolioContext';
 
 interface CertificateCardProps {
   title: string;
@@ -69,79 +70,57 @@ const CertificateCard = ({ title, issuer, date, icon, credentialId, index, categ
   </motion.div>
 );
 
+const getIconForCategory = (category: string) => {
+  switch (category.toLowerCase()) {
+    case 'security':
+      return <Shield className="w-6 h-6" />;
+    case 'cloud':
+      return <Cloud className="w-6 h-6" />;
+    default:
+      return <BadgeCheck className="w-6 h-6" />;
+  }
+};
+
 const CertificatesSection = () => {
   const [activeTab, setActiveTab] = useState("all");
+  const { certificates, loading } = usePortfolio();
   
-  const certificates = [
-    {
-      title: "Google Cybersecurity",
-      issuer: "Coursera",
-      date: "2023",
-      icon: <Shield className="w-6 h-6" />,
-      category: "security",
-      credentialId: "via coursera",
-      imageUrl: "https://picsum.photos/id/180/500/300"
-    },
-    {
-      title: "Google UX Design",
-      issuer: "Google",
-      date: "2024",
-      icon: <BadgeCheck className="w-6 h-6" />,
-      category: "design",
-      credentialId: "via coursera",
-      imageUrl: "https://picsum.photos/id/26/500/300"
-    },
-    {
-      title: "Python Automation",
-      issuer: "Google",
-      date: "2024",
-      icon: <BadgeCheck className="w-6 h-6" />,
-      category: "python",
-      credentialId: "via coursera",
-      imageUrl: "https://picsum.photos/id/160/500/300"
-    },
-    {
-      title: "Software Engineering Basics",
-      issuer: "edX",
-      date: "2024",
-      icon: <Badge className="w-6 h-6" />,
-      category: "engineering",
-      credentialId: "Authorized by IBM",
-      imageUrl: "https://picsum.photos/id/48/500/300"
-    },
-    {
-      title: "AWS Cloud Foundations",
-      issuer: "AWS Academy",
-      date: "2022",
-      icon: <Cloud className="w-6 h-6" />,
-      category: "cloud",
-      credentialId: "via AWS",
-      imageUrl: "https://picsum.photos/id/60/500/300"
-    },
-    {
-      title: "Project Management",
-      issuer: "Google",
-      date: "2024",
-      icon: <BadgeCheck className="w-6 h-6" />,
-      category: "management",
-      credentialId: "via coursera",
-      imageUrl: "https://picsum.photos/id/20/500/300"
-    }
-  ];
-
+  // Get unique categories from certificates for tabs
+  const categoriesSet = new Set<string>(certificates.map(cert => cert.category));
   const categories = [
     { id: "all", label: "All" },
-    { id: "design", label: "UX Design" },
-    { id: "python", label: "Python" },
-    { id: "engineering", label: "Software Engineering" },
-    { id: "cloud", label: "Data Analytics" },
-    { id: "management", label: "Mobile Application Development" },
-    { id: "security", label: "AI-ML, Deep Learning, Prompting" }
+    ...Array.from(categoriesSet).map(category => ({
+      id: category,
+      label: category.charAt(0).toUpperCase() + category.slice(1) // Capitalize first letter
+    }))
   ];
 
   const filteredCertificates = activeTab === "all" 
     ? certificates 
     : certificates.filter(cert => cert.category === activeTab);
+
+  if (loading.certificates) {
+    return (
+      <section id="certificates" className="bg-gradient-to-b from-indigo-950 to-slate-900 section">
+        <div className="section-container">
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="section-title gradient-text text-center mx-auto">
+              Professional Certificates
+            </h2>
+          </motion.div>
+          <div className="flex justify-center items-center min-h-[400px]">
+            <p className="text-gray-400">Loading certificates...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="certificates" className="bg-gradient-to-b from-indigo-950 to-slate-900 section">
@@ -161,48 +140,54 @@ const CertificatesSection = () => {
           </p>
         </motion.div>
         
-        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <motion.div 
-            className="flex justify-center mb-8 overflow-x-auto pb-4 scrollbar-none" 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <TabsList className="bg-white/5 backdrop-blur-sm border border-white/10">
-              {categories.map(category => (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className={cn(
-                    "text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10",
-                    "px-4 py-1.5 rounded transition-all duration-300"
-                  )}
-                >
-                  {category.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </motion.div>
-          
-          <TabsContent value={activeTab} className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-              {filteredCertificates.map((cert, index) => (
-                <CertificateCard
-                  key={index}
-                  title={cert.title}
-                  issuer={cert.issuer}
-                  date={cert.date}
-                  icon={cert.icon}
-                  credentialId={cert.credentialId}
-                  category={cert.category}
-                  index={index}
-                  imageUrl={cert.imageUrl}
-                />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+        {certificates.length === 0 ? (
+          <div className="flex justify-center items-center min-h-[200px]">
+            <p className="text-gray-400">No certificates available yet.</p>
+          </div>
+        ) : (
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <motion.div 
+              className="flex justify-center mb-8 overflow-x-auto pb-4 scrollbar-none" 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <TabsList className="bg-white/5 backdrop-blur-sm border border-white/10">
+                {categories.map(category => (
+                  <TabsTrigger 
+                    key={category.id} 
+                    value={category.id}
+                    className={cn(
+                      "text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10",
+                      "px-4 py-1.5 rounded transition-all duration-300"
+                    )}
+                  >
+                    {category.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </motion.div>
+            
+            <TabsContent value={activeTab} className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                {filteredCertificates.map((cert, index) => (
+                  <CertificateCard
+                    key={cert.id || index}
+                    title={cert.title}
+                    issuer={cert.issuer}
+                    date={cert.date}
+                    icon={getIconForCategory(cert.category)}
+                    credentialId={cert.credentialId}
+                    category={cert.category}
+                    index={index}
+                    imageUrl={cert.imageUrl}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     </section>
   );
