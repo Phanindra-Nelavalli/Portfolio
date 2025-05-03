@@ -1,14 +1,13 @@
-
 import { useState, useEffect } from "react";
 import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Trash2 } from "lucide-react";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 interface Certificate {
   id?: string;
@@ -31,6 +30,7 @@ const AdminCertificatesForm = () => {
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const { toast } = useToast();
+  const [imageFile, setImageFile] = useState<File | null>(null); // Track the selected file
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -41,7 +41,7 @@ const AdminCertificatesForm = () => {
           id: doc.id,
           ...doc.data()
         })) as Certificate[];
-        
+
         setCertificates(certificatesList);
       } catch (error) {
         console.error("Error fetching certificates:", error);
@@ -63,13 +63,41 @@ const AdminCertificatesForm = () => {
     setNewCertificate(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleAddCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const docRef = await addDoc(collection(db, "certificates"), newCertificate);
-      setCertificates([...certificates, { ...newCertificate, id: docRef.id }]);
+      let imageUrl = "";
+      if (imageFile) {
+        const storageRef = ref(storage, `certificates/${imageFile.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+        await new Promise<void>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            null,
+            (error) => reject(error),
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              imageUrl = downloadURL;
+              resolve();
+            }
+          );
+        });
+      }
+
+      const docRef = await addDoc(collection(db, "certificates"), {
+        ...newCertificate,
+        imageUrl: imageUrl || newCertificate.imageUrl,
+      });
+      setCertificates([...certificates, { ...newCertificate, id: docRef.id, imageUrl }]);
       setNewCertificate({
         title: "",
         issuedBy: "",
@@ -77,6 +105,7 @@ const AdminCertificatesForm = () => {
         imageUrl: "",
         credentialUrl: "",
       });
+      setImageFile(null);
       toast({
         title: "Success",
         description: "Certificate added successfully",
@@ -95,7 +124,7 @@ const AdminCertificatesForm = () => {
 
   const handleDeleteCertificate = async (id: string | undefined) => {
     if (!id) return;
-    
+
     try {
       await deleteDoc(doc(db, "certificates", id));
       setCertificates(certificates.filter(cert => cert.id !== id));
@@ -137,7 +166,7 @@ const AdminCertificatesForm = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="issuedBy">Issued By</Label>
                 <Input
@@ -150,7 +179,7 @@ const AdminCertificatesForm = () => {
                 />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="date">Issue Date</Label>
@@ -163,19 +192,19 @@ const AdminCertificatesForm = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">Certificate Image URL</Label>
+                <Label htmlFor="imageUrl">Certificate Image</Label>
                 <Input
                   id="imageUrl"
                   name="imageUrl"
-                  value={newCertificate.imageUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/certificate.jpg"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="credentialUrl">Credential URL</Label>
               <Input
@@ -186,14 +215,14 @@ const AdminCertificatesForm = () => {
                 placeholder="https://coursera.org/verify/123456"
               />
             </div>
-            
+
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Adding..." : "Add Certificate"}
             </Button>
           </form>
         </CardContent>
       </Card>
-      
+
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Existing Certificates</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -202,9 +231,9 @@ const AdminCertificatesForm = () => {
           ) : (
             certificates.map(certificate => (
               <Card key={certificate.id} className="relative">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="absolute top-2 right-2 h-8 w-8 text-destructive"
                   onClick={() => handleDeleteCertificate(certificate.id)}
                 >
@@ -218,9 +247,9 @@ const AdminCertificatesForm = () => {
                     </p>
                     {certificate.imageUrl && (
                       <div className="aspect-[3/2] bg-muted/20 overflow-hidden rounded-md mt-2">
-                        <img 
-                          src={certificate.imageUrl} 
-                          alt={certificate.title} 
+                        <img
+                          src={certificate.imageUrl}
+                          alt={certificate.title}
                           className="h-full w-full object-cover"
                         />
                       </div>

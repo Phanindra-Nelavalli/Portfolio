@@ -1,196 +1,130 @@
+import { useState, useEffect } from "react";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { Trash2, Award, ArrowRight, View, Link, Eye } from "lucide-react";
+import { Button } from "./ui/button";
+import { motion } from "framer-motion";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Shield, Cloud, ExternalLink, Award, BadgeCheck } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { usePortfolio, CertificateType } from '@/contexts/PortfolioContext';
-
-interface CertificateCardProps {
+interface Certificate {
+  id?: string;
   title: string;
-  issuer: string;
+  issuedBy: string;
   date: string;
-  icon: React.ReactNode;
-  credentialId?: string;
-  index: number;
-  category: string;
-  imageUrl?: string;
+  imageUrl: string;
+  credentialUrl: string;
 }
 
-const CertificateCard = ({ title, issuer, date, icon, credentialId, index, category, imageUrl }: CertificateCardProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay: index * 0.1 }}
-    viewport={{ once: true }}
-    className="h-full"
-  >
-    <Card className="bg-gradient-to-br from-white/10 to-white/5 text-white backdrop-blur-sm border border-white/10 hover:border-white/20 transition-colors duration-300 h-full flex flex-col">
-      <CardHeader className="pb-2 relative">
-        <div className="absolute right-2 top-2 text-violet-400 bg-violet-400/10 p-2 rounded-full">
-          {icon}
-        </div>
-        
-        <div className="h-48 overflow-hidden rounded-t-md mb-2">
-          {imageUrl ? (
-            <img 
-              src={imageUrl} 
-              alt={title} 
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-indigo-900/30">
-              <Award className="w-16 h-16 text-violet-400/50" />
-            </div>
-          )}
-        </div>
-        
-        <CardTitle className="text-xl font-bold">{title}</CardTitle>
-      </CardHeader>
-      
-      <CardContent className="flex-grow">
-        <p className="text-gray-300">Issued by {issuer}</p>
-        {credentialId && (
-          <p className="text-xs text-gray-400 mt-1">Credential ID: {credentialId}</p>
-        )}
-      </CardContent>
-      
-      <CardFooter className="pt-2 flex flex-col items-start gap-2">
-        <Badge variant="outline" className="bg-violet-400/10 text-gray-300 border-violet-400/20">
-          {date}
-        </Badge>
-        <Button variant="link" className="text-violet-400 p-0 h-auto flex items-center gap-1">
-          View Certificate <ExternalLink className="w-3.5 h-3.5" />
-        </Button>
-      </CardFooter>
-    </Card>
-  </motion.div>
-);
+const CertificateSection = () => {
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [fetchLoading, setFetchLoading] = useState(true);
 
-const getIconForCategory = (category: string) => {
-  switch (category.toLowerCase()) {
-    case 'security':
-      return <Shield className="w-6 h-6" />;
-    case 'cloud':
-      return <Cloud className="w-6 h-6" />;
-    default:
-      return <BadgeCheck className="w-6 h-6" />;
-  }
-};
+  useEffect(() => {
+    const fetchCertificates = async () => {
+      try {
+        const certificatesCollection = collection(db, "certificates");
+        const certificatesSnapshot = await getDocs(certificatesCollection);
+        const certificatesList = certificatesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Certificate[];
 
-const CertificatesSection = () => {
-  const [activeTab, setActiveTab] = useState("all");
-  const { certificates, loading } = usePortfolio();
-  
-  // Get unique categories from certificates for tabs
-  const categoriesSet = new Set<string>(certificates.map(cert => cert.category));
-  const categories = [
-    { id: "all", label: "All" },
-    ...Array.from(categoriesSet).map(category => ({
-      id: category,
-      label: category.charAt(0).toUpperCase() + category.slice(1) // Capitalize first letter
-    }))
-  ];
+        setCertificates(certificatesList);
+      } catch (error) {
+        console.error("Error fetching certificates:", error);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
 
-  const filteredCertificates = activeTab === "all" 
-    ? certificates 
-    : certificates.filter(cert => cert.category === activeTab);
+    fetchCertificates();
+  }, []);
 
-  if (loading.certificates) {
-    return (
-      <section id="certificates" className="bg-gradient-to-b from-indigo-950 to-slate-900 section">
-        <div className="section-container">
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="section-title gradient-text text-center mx-auto">
-              Professional Certificates
-            </h2>
-          </motion.div>
-          <div className="flex justify-center items-center min-h-[400px]">
-            <p className="text-gray-400">Loading certificates...</p>
-          </div>
-        </div>
-      </section>
-    );
+  if (fetchLoading) {
+    return <div>Loading certificate data...</div>;
   }
 
   return (
-    <section id="certificates" className="bg-gradient-to-b from-indigo-950 to-slate-900 section">
+    <section
+      id="certificates"
+      className="bg-gradient-to-b from-indigo-950 to-slate-900 py-12"
+    >
       <div className="section-container">
-        <motion.div
-          className="text-center"
+        <motion.h2
+          className="section-title gradient-text inline-block mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h2 className="section-title gradient-text text-center mx-auto">
-            Professional Certificates
-          </h2>
-          <p className="text-gray-400 mb-8">
-            A collection of my professional certifications and achievements
-          </p>
-        </motion.div>
-        
-        {certificates.length === 0 ? (
-          <div className="flex justify-center items-center min-h-[200px]">
-            <p className="text-gray-400">No certificates available yet.</p>
-          </div>
-        ) : (
-          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <motion.div 
-              className="flex justify-center mb-8 overflow-x-auto pb-4 scrollbar-none" 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <TabsList className="bg-white/5 backdrop-blur-sm border border-white/10">
-                {categories.map(category => (
-                  <TabsTrigger 
-                    key={category.id} 
-                    value={category.id}
-                    className={cn(
-                      "text-gray-300 data-[state=active]:text-violet-400 data-[state=active]:bg-violet-400/10",
-                      "px-4 py-1.5 rounded transition-all duration-300"
-                    )}
+          Certificates
+        </motion.h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {certificates.length === 0 ? (
+            <p className="text-muted-foreground text-center col-span-2">
+              No certificates added yet.
+            </p>
+          ) : (
+            certificates.map((certificate, index) => (
+              <motion.div
+                key={certificate.id}
+                className="relative glass-card p-6"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute right-6 top-6 p-2 bg-violet-400/20 rounded-full">
+                  <Award className="h-6 w-6 text-violet-400" />
+                </div>
+
+                <h4 className="text-xl font-bold mb-2">{certificate.title}</h4>
+                <div className="text-gray-300 text-sm mb-2">
+                  {certificate.issuedBy} • {certificate.date}
+                </div>
+
+                {certificate.imageUrl && (
+                  <div className="aspect-[3/2] bg-muted/20 overflow-hidden rounded-md mt-2">
+                    <img
+                      src={certificate.imageUrl}
+                      alt={certificate.title}
+                      className="h-full w-full object-contain"
+                      style={{ objectPosition: "top" }}
+                    />
+                  </div>
+                )}
+
+                <div className="flex justify-between mt-4">
+                  <motion.a
+                    href={certificate.imageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-violet-400 hover:text-violet-300 transition-colors"
+                    whileHover={{ x: 5 }}
                   >
-                    {category.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </motion.div>
-            
-            <TabsContent value={activeTab} className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-                {filteredCertificates.map((cert, index) => (
-                  <CertificateCard
-                    key={cert.id || index}
-                    title={cert.title}
-                    issuer={cert.issuer}
-                    date={cert.date}
-                    icon={getIconForCategory(cert.category)}
-                    credentialId={cert.credentialId}
-                    category={cert.category}
-                    index={index}
-                    imageUrl={cert.imageUrl}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        )}
+                    <Eye size={16} className="mr-2" />
+                    View Certificate
+                  </motion.a>
+
+                  <motion.a
+                    href={certificate.credentialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-violet-400 hover:text-violet-300 transition-colors"
+                    whileHover={{ x: 5 }}
+                  >
+                    <Link size={16} className="mr-2" />
+                    View Credential
+                  </motion.a>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
       </div>
     </section>
   );
 };
 
-export default CertificatesSection;
+export default CertificateSection;

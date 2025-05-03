@@ -1,6 +1,11 @@
-
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,8 +19,11 @@ interface Experience {
   id?: string;
   role: string;
   company: string;
-  duration: string;
   description: string;
+  skills: string[];
+  startDate: string;
+  endDate?: string;
+  duration?: string;
 }
 
 const AdminExperienceForm = () => {
@@ -23,8 +31,10 @@ const AdminExperienceForm = () => {
   const [newExperience, setNewExperience] = useState<Experience>({
     role: "",
     company: "",
-    duration: "",
-    description: ""
+    description: "",
+    skills: [],
+    startDate: "",
+    endDate: "",
   });
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -35,11 +45,11 @@ const AdminExperienceForm = () => {
       try {
         const experiencesCollection = collection(db, "experiences");
         const experiencesSnapshot = await getDocs(experiencesCollection);
-        const experiencesList = experiencesSnapshot.docs.map(doc => ({
+        const experiencesList = experiencesSnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as Experience[];
-        
+
         setExperiences(experiencesList);
       } catch (error) {
         console.error("Error fetching experiences:", error);
@@ -56,23 +66,61 @@ const AdminExperienceForm = () => {
     fetchExperiences();
   }, [toast]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setNewExperience(prev => ({ ...prev, [name]: value }));
+    setNewExperience((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setNewExperience((prev) => ({
+      ...prev,
+      skills: value.split(",").map((skill) => skill.trim()),
+    }));
+  };
+
+  const formatDateRange = (start: string, end?: string) => {
+    const format = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return date.toLocaleString("default", {
+        month: "short",
+        year: "numeric",
+      });
+    };
+    const startFormatted = format(start);
+    const endFormatted = end ? format(end) : "Present";
+    return `${startFormatted} - ${endFormatted}`;
   };
 
   const handleAddExperience = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    const formattedDuration = formatDateRange(
+      newExperience.startDate,
+      newExperience.endDate
+    );
+
+    const experienceToAdd = {
+      ...newExperience,
+      duration: formattedDuration,
+    };
+
     try {
-      const docRef = await addDoc(collection(db, "experiences"), newExperience);
-      setExperiences([...experiences, { ...newExperience, id: docRef.id }]);
+      const docRef = await addDoc(
+        collection(db, "experiences"),
+        experienceToAdd
+      );
+      setExperiences([...experiences, { ...experienceToAdd, id: docRef.id }]);
       setNewExperience({
         role: "",
         company: "",
-        duration: "",
-        description: ""
+        description: "",
+        skills: [],
+        startDate: "",
+        endDate: "",
       });
       toast({
         title: "Success",
@@ -92,10 +140,10 @@ const AdminExperienceForm = () => {
 
   const handleDeleteExperience = async (id: string | undefined) => {
     if (!id) return;
-    
+
     try {
       await deleteDoc(doc(db, "experiences", id));
-      setExperiences(experiences.filter(exp => exp.id !== id));
+      setExperiences(experiences.filter((exp) => exp.id !== id));
       toast({
         title: "Success",
         description: "Experience deleted successfully",
@@ -134,7 +182,6 @@ const AdminExperienceForm = () => {
                   required
                 />
               </div>
-              
               <div className="space-y-2">
                 <Label htmlFor="company">Company</Label>
                 <Input
@@ -147,19 +194,33 @@ const AdminExperienceForm = () => {
                 />
               </div>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="duration">Duration</Label>
-              <Input
-                id="duration"
-                name="duration"
-                value={newExperience.duration}
-                onChange={handleInputChange}
-                placeholder="Jan 2022 - Present"
-                required
-              />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="startDate">Start Date</Label>
+                <Input
+                  id="startDate"
+                  name="startDate"
+                  type="month"
+                  value={newExperience.startDate}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="endDate">End Date</Label>
+                <Input
+                  id="endDate"
+                  name="endDate"
+                  type="month"
+                  value={newExperience.endDate}
+                  onChange={handleInputChange}
+                  placeholder="Leave empty for Present"
+                />
+                <p className="text-xs text-gray-500">Leave empty for Present</p>
+              </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -172,24 +233,35 @@ const AdminExperienceForm = () => {
                 required
               />
             </div>
-            
+
+            <div className="space-y-2">
+              <Label htmlFor="skills">Technologies / Skills</Label>
+              <Input
+                id="skills"
+                name="skills"
+                value={newExperience.skills.join(", ")}
+                onChange={handleSkillsChange}
+                placeholder="e.g., React, Node.js, TypeScript"
+              />
+            </div>
+
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Adding..." : "Add Experience"}
             </Button>
           </form>
         </CardContent>
       </Card>
-      
+
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Existing Experiences</h3>
         {experiences.length === 0 ? (
           <p className="text-muted-foreground">No experiences added yet.</p>
         ) : (
-          experiences.map(experience => (
+          experiences.map((experience) => (
             <Card key={experience.id} className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="absolute top-2 right-2 h-8 w-8 text-destructive"
                 onClick={() => handleDeleteExperience(experience.id)}
               >
@@ -198,8 +270,11 @@ const AdminExperienceForm = () => {
               <CardContent className="pt-6">
                 <div className="space-y-2">
                   <h4 className="font-medium">{experience.role}</h4>
-                  <p className="text-sm text-muted-foreground">{experience.company} | {experience.duration}</p>
-                  <p className="text-sm">{experience.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {experience.company} | {experience.duration}
+                  </p>
+                  <p>{experience.description}</p>
+                  <p className="text-sm">{experience.skills.join(", ")}</p>
                 </div>
               </CardContent>
             </Card>

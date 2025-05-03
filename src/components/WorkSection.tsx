@@ -1,48 +1,68 @@
-
-import { motion } from 'framer-motion';
-import ProjectCard from './ProjectCard';
+import { motion } from "framer-motion";
+import ProjectCard from "./ProjectCard";
 
 const WorkSection = () => {
   const projects = [
     {
-      title: 'Sign Bridge',
-      subtitle: 'Indian Sign Language Translator',
-      description: 'A cross-platform mobile app using Flutter to convert voice input to Indian Sign Language (ISL) visuals, serving 100+ users in the testing phase with 85% accuracy in voice-to-sign language conversion.',
-      technologies: ['Flutter', 'Firebase', 'Machine Learning', 'BERT', 'Transformers'],
-      imageUrl: 'https://images.unsplash.com/photo-1508780709619-79562169bc64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+      title: "Sign Bridge",
+      subtitle: "Indian Sign Language Translator",
+      description:
+        "A cross-platform mobile app using Flutter to convert voice input to Indian Sign Language (ISL) visuals, serving 100+ users in the testing phase with 85% accuracy in voice-to-sign language conversion.",
+      technologies: [
+        "Flutter",
+        "Firebase",
+        "Machine Learning",
+        "BERT",
+        "Transformers",
+      ],
+      imageUrl:
+        "https://images.unsplash.com/photo-1508780709619-79562169bc64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
     },
     {
-      title: 'Lexica AR',
-      subtitle: 'Immersive AR learning app',
-      description: 'An augmented reality educational tool that engages 200+ students with AR features to simplify complex concepts, featuring personalized learning paths and improved student comprehension by 40%.',
-      technologies: ['React Native', 'ViroReact', 'Firebase', 'AR Models'],
-      imageUrl: 'https://images.unsplash.com/photo-1626379953822-baec19c3accd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+      title: "Lexica AR",
+      subtitle: "Immersive AR learning app",
+      description:
+        "An augmented reality educational tool that engages 200+ students with AR features to simplify complex concepts, featuring personalized learning paths and improved student comprehension by 40%.",
+      technologies: ["React Native", "ViroReact", "Firebase", "AR Models"],
+      imageUrl:
+        "https://images.unsplash.com/photo-1626379953822-baec19c3accd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
     },
     {
-      title: 'E-CELL Website',
-      subtitle: '3D startup visualization platform',
-      description: 'Developed and maintained the E-CELL website, supporting 500+ monthly users with entrepreneurship resources and event access, featuring 3D visualizations of startups to increase engagement.',
-      technologies: ['React.js', 'Three.js', 'Firebase', 'Node.js', 'Express.js'],
-      imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2015&q=80'
-    }
+      title: "E-CELL Website",
+      subtitle: "3D startup visualization platform",
+      description:
+        "Developed and maintained the E-CELL website, supporting 500+ monthly users with entrepreneurship resources and event access, featuring 3D visualizations of startups to increase engagement.",
+      technologies: [
+        "React.js",
+        "Three.js",
+        "Firebase",
+        "Node.js",
+        "Express.js",
+      ],
+      imageUrl:
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2015&q=80",
+    },
   ];
 
   return (
-    <section id="work" className="bg-gradient-to-b from-indigo-950 to-slate-900">
+    <section
+      id="work"
+      className="bg-gradient-to-b from-indigo-950 to-slate-900"
+    >
       <div className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <motion.h2 
-            className="section-title gradient-text text-center mx-auto"
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2
+            className="section-title gradient-text text-center mx-auto mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            Selected Work
+            Projects
           </motion.h2>
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="divide-y divide-gray-800/50"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

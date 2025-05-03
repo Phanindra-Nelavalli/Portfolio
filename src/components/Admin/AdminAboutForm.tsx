@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -26,7 +25,7 @@ const AdminAboutForm = () => {
       try {
         const docRef = doc(db, "content", "about");
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
           setAboutData(docSnap.data() as any);
         }
@@ -45,9 +44,15 @@ const AdminAboutForm = () => {
     fetchAboutData();
   }, [toast]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setAboutData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = (url: string) => {
+    setAboutData((prev) => ({ ...prev, imageUrl: url }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,13 +76,6 @@ const AdminAboutForm = () => {
       setLoading(false);
     }
   };
-  
-  const handleImageUpload = (url: string) => {
-    setAboutData(prev => ({
-      ...prev,
-      imageUrl: url
-    }));
-  };
 
   if (fetchLoading) {
     return <div>Loading about data...</div>;
@@ -97,7 +95,6 @@ const AdminAboutForm = () => {
               placeholder="About Me"
             />
           </div>
-          
           <div className="space-y-2">
             <Label htmlFor="subtitle">Subtitle</Label>
             <Input
@@ -108,7 +105,6 @@ const AdminAboutForm = () => {
               placeholder="Your subtitle"
             />
           </div>
-          
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -120,16 +116,6 @@ const AdminAboutForm = () => {
               rows={6}
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label>Profile Image</Label>
-            <FileUpload 
-              onFileUpload={handleImageUpload} 
-              currentImageUrl={aboutData.imageUrl}
-              folder="about"
-            />
-          </div>
-          
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Saving..." : "Save Changes"}
           </Button>
