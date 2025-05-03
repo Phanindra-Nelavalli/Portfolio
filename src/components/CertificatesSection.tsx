@@ -89,8 +89,8 @@ const CertificateSection = () => {
                     <img
                       src={certificate.imageUrl}
                       alt={certificate.title}
-                      className="h-full w-full object-contain"
-                      style={{ objectPosition: "top" }}
+                      className="h-full w-full object-cover"
+                      style={{ objectPosition: "center" }}
                     />
                   </div>
                 )}

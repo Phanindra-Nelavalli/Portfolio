@@ -1,9 +1,20 @@
-
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +25,7 @@ import FileUpload from "./FileUpload";
 interface Project {
   id?: string;
   title: string;
+  subtitle: string;
   description: string;
   imageUrl: string;
   technologies: string;
@@ -25,12 +37,14 @@ const AdminProjectsForm = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProject, setNewProject] = useState<Project>({
     title: "",
+    subtitle: "",
     description: "",
     imageUrl: "",
     technologies: "",
     demoLink: "",
-    githubLink: ""
+    githubLink: "",
   });
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const { toast } = useToast();
@@ -40,11 +54,10 @@ const AdminProjectsForm = () => {
       try {
         const projectsCollection = collection(db, "projects");
         const projectsSnapshot = await getDocs(projectsCollection);
-        const projectsList = projectsSnapshot.docs.map(doc => ({
+        const projectsList = projectsSnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as Project[];
-        
         setProjects(projectsList);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -61,35 +74,56 @@ const AdminProjectsForm = () => {
     fetchProjects();
   }, [toast]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setNewProject(prev => ({ ...prev, [name]: value }));
+    setNewProject((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddProject = async (e: React.FormEvent) => {
+  const handleAddOrUpdateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const docRef = await addDoc(collection(db, "projects"), newProject);
-      setProjects([...projects, { ...newProject, id: docRef.id }]);
+      if (editingProjectId) {
+        const projectRef = doc(db, "projects", editingProjectId);
+        await updateDoc(projectRef, { ...newProject });
+        setProjects((prev) =>
+          prev.map((project) =>
+            project.id === editingProjectId
+              ? { ...newProject, id: editingProjectId }
+              : project
+          )
+        );
+        toast({
+          title: "Success",
+          description: "Project updated successfully",
+        });
+      } else {
+        const docRef = await addDoc(collection(db, "projects"), newProject);
+        setProjects([...projects, { ...newProject, id: docRef.id }]);
+        toast({
+          title: "Success",
+          description: "Project added successfully",
+        });
+      }
+
       setNewProject({
         title: "",
+        subtitle: "",
         description: "",
         imageUrl: "",
         technologies: "",
         demoLink: "",
-        githubLink: ""
+        githubLink: "",
       });
-      toast({
-        title: "Success",
-        description: "Project added successfully",
-      });
+      setEditingProjectId(null);
     } catch (error) {
-      console.error("Error adding project:", error);
+      console.error("Error saving project:", error);
       toast({
         title: "Error",
-        description: "Failed to add project",
+        description: "Failed to save project",
         variant: "destructive",
       });
     } finally {
@@ -99,10 +133,10 @@ const AdminProjectsForm = () => {
 
   const handleDeleteProject = async (id: string | undefined) => {
     if (!id) return;
-    
+
     try {
       await deleteDoc(doc(db, "projects", id));
-      setProjects(projects.filter(project => project.id !== id));
+      setProjects(projects.filter((project) => project.id !== id));
       toast({
         title: "Success",
         description: "Project deleted successfully",
@@ -118,9 +152,9 @@ const AdminProjectsForm = () => {
   };
 
   const handleImageUpload = (url: string) => {
-    setNewProject(prev => ({
+    setNewProject((prev) => ({
       ...prev,
-      imageUrl: url
+      imageUrl: url,
     }));
   };
 
@@ -132,10 +166,12 @@ const AdminProjectsForm = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Add New Project</CardTitle>
+          <CardTitle>
+            {editingProjectId ? "Edit Project" : "Add New Project"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddProject} className="space-y-4">
+          <form onSubmit={handleAddOrUpdateProject} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Project Title</Label>
               <Input
@@ -147,15 +183,24 @@ const AdminProjectsForm = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label>Project Image</Label>
-              <FileUpload 
-                onFileUpload={handleImageUpload}
-                folder="projects"
+              <Label htmlFor="subtitle">Project Subtitle</Label>
+              <Input
+                id="subtitle"
+                name="subtitle"
+                value={newProject.subtitle}
+                onChange={handleInputChange}
+                placeholder="Project Subtitle"
+                required
               />
             </div>
-            
+
+            <div className="space-y-2">
+              <Label>Project Image</Label>
+              <FileUpload onFileUpload={handleImageUpload} folder="projects" />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -168,7 +213,7 @@ const AdminProjectsForm = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="technologies">Technologies (comma separated)</Label>
               <Input
@@ -180,7 +225,7 @@ const AdminProjectsForm = () => {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="demoLink">Demo Link</Label>
@@ -192,7 +237,7 @@ const AdminProjectsForm = () => {
                   placeholder="https://example.com"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="githubLink">GitHub Link</Label>
                 <Input
@@ -204,47 +249,93 @@ const AdminProjectsForm = () => {
                 />
               </div>
             </div>
-            
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Adding..." : "Add Project"}
-            </Button>
+
+            <div className="flex gap-2">
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading
+                  ? editingProjectId
+                    ? "Updating..."
+                    : "Adding..."
+                  : editingProjectId
+                  ? "Update Project"
+                  : "Add Project"}
+              </Button>
+              {editingProjectId && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setNewProject({
+                      title: "",
+                      subtitle: "",
+                      description: "",
+                      imageUrl: "",
+                      technologies: "",
+                      demoLink: "",
+                      githubLink: "",
+                    });
+                    setEditingProjectId(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
           </form>
         </CardContent>
       </Card>
-      
+
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Existing Projects</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {projects.length === 0 ? (
             <p className="text-muted-foreground">No projects added yet.</p>
           ) : (
-            projects.map(project => (
+            projects.map((project) => (
               <Card key={project.id} className="relative">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-2 right-2 h-8 w-8 text-destructive"
-                  onClick={() => handleDeleteProject(project.id)}
-                >
-                  <Trash2 className="h-5 w-5" />
-                </Button>
-                <CardContent className="pt-6">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">{project.title}</h4>
-                    {project.imageUrl && (
-                      <div className="aspect-video bg-muted/20 overflow-hidden rounded-md">
-                        <img 
-                          src={project.imageUrl} 
-                          alt={project.title} 
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <p className="text-sm">{project.description}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {project.technologies}
-                    </p>
-                  </div>
+                <div className="absolute top-2 right-2 flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive"
+                    onClick={() => handleDeleteProject(project.id)}
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setNewProject({
+                        title: project.title,
+                        subtitle: project.subtitle,
+                        description: project.description,
+                        imageUrl: project.imageUrl,
+                        technologies: project.technologies,
+                        demoLink: project.demoLink,
+                        githubLink: project.githubLink,
+                      });
+                      setEditingProjectId(project.id || null);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </div>
+                <CardContent className="pt-6 space-y-2">
+                  <h4 className="font-medium">{project.title}</h4>
+                  {project.imageUrl && (
+                    <div className="aspect-video bg-muted/20 overflow-hidden rounded-md">
+                      <img
+                        src={project.imageUrl}
+                        alt={project.title}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <p className="text-sm">{project.description}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {project.technologies}
+                  </p>
                 </CardContent>
               </Card>
             ))

@@ -46,12 +46,16 @@ const SkillCard = ({
     className="bg-white/5 rounded-lg p-6 backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay: index * 0.1 }}
-    viewport={{ once: true }}
     whileHover={{
       y: -5,
       boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.3)",
     }}
+    transition={{
+      opacity: { duration: 0.1, delay: 0},
+      y: { duration: 0.1, delay: 0 },
+      boxShadow: { duration: 0.01 }, // fast hover effect
+    }}
+    viewport={{ once: true }}
   >
     <div className="flex items-center mb-4">
       <div className="mr-4 bg-violet-400/20 p-3 rounded-full">{icon}</div>

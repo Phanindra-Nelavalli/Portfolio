@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +25,7 @@ const AdminAchievementsForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
+  const [editing, setEditing] = useState<Achievement | null>(null); // Track the editing achievement
   const { toast } = useToast();
 
   useEffect(() => {
@@ -59,27 +59,40 @@ const AdminAchievementsForm = () => {
     setNewAchievement(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAddAchievement = async (e: React.FormEvent) => {
+  const handleAddOrUpdateAchievement = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const docRef = await addDoc(collection(db, "achievements"), newAchievement);
-      setAchievements([...achievements, { ...newAchievement, id: docRef.id }]);
-      setNewAchievement({
-        title: "",
-        date: "",
-        description: "",
-      });
-      toast({
-        title: "Success",
-        description: "Achievement added successfully",
-      });
+      if (editing) {
+        // Update the existing achievement
+        const achievementRef = doc(db, "achievements", editing.id!);
+        await updateDoc(achievementRef, {...newAchievement});
+        setAchievements(
+          achievements.map(achievement =>
+            achievement.id === editing.id ? { ...newAchievement, id: editing.id } : achievement
+          )
+        );
+        toast({
+          title: "Success",
+          description: "Achievement updated successfully",
+        });
+      } else {
+        // Add new achievement
+        const docRef = await addDoc(collection(db, "achievements"), newAchievement);
+        setAchievements([...achievements, { ...newAchievement, id: docRef.id }]);
+        toast({
+          title: "Success",
+          description: "Achievement added successfully",
+        });
+      }
+      setNewAchievement({ title: "", date: "", description: "" });
+      setEditing(null); // Clear editing state
     } catch (error) {
-      console.error("Error adding achievement:", error);
+      console.error("Error adding or updating achievement:", error);
       toast({
         title: "Error",
-        description: "Failed to add achievement",
+        description: "Failed to add or update achievement",
         variant: "destructive",
       });
     } finally {
@@ -107,6 +120,11 @@ const AdminAchievementsForm = () => {
     }
   };
 
+  const handleEditAchievement = (achievement: Achievement) => {
+    setEditing(achievement);
+    setNewAchievement(achievement);
+  };
+
   if (fetchLoading) {
     return <div>Loading achievement data...</div>;
   }
@@ -115,10 +133,10 @@ const AdminAchievementsForm = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Add New Achievement</CardTitle>
+          <CardTitle className="text-xl">{editing ? "Edit Achievement" : "Add New Achievement"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddAchievement} className="space-y-4">
+          <form onSubmit={handleAddOrUpdateAchievement} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="title">Achievement Title</Label>
@@ -159,7 +177,7 @@ const AdminAchievementsForm = () => {
             </div>
             
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Adding..." : "Add Achievement"}
+              {loading ? (editing ? "Updating..." : "Adding...") : (editing ? "Update Achievement" : "Add Achievement")}
             </Button>
           </form>
         </CardContent>
@@ -187,6 +205,13 @@ const AdminAchievementsForm = () => {
                     <p className="text-xs text-muted-foreground">{achievement.date}</p>
                   </div>
                   <p className="text-sm">{achievement.description}</p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-4" 
+                    onClick={() => handleEditAchievement(achievement)}
+                  >
+                    Edit
+                  </Button>
                 </div>
               </CardContent>
             </Card>

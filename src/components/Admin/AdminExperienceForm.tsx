@@ -5,6 +5,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 
 interface Experience {
   id?: string;
@@ -36,6 +37,7 @@ const AdminExperienceForm = () => {
     startDate: "",
     endDate: "",
   });
+  const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const { toast } = useToast();
@@ -103,17 +105,29 @@ const AdminExperienceForm = () => {
       newExperience.endDate
     );
 
-    const experienceToAdd = {
+    const experienceToSubmit = {
       ...newExperience,
       duration: formattedDuration,
     };
 
     try {
-      const docRef = await addDoc(
-        collection(db, "experiences"),
-        experienceToAdd
-      );
-      setExperiences([...experiences, { ...experienceToAdd, id: docRef.id }]);
+      if (editId) {
+        await updateDoc(doc(db, "experiences", editId), experienceToSubmit);
+        setExperiences((prev) =>
+          prev.map((exp) => (exp.id === editId ? { ...experienceToSubmit, id: editId } : exp))
+        );
+        toast({
+          title: "Success",
+          description: "Experience updated successfully",
+        });
+      } else {
+        const docRef = await addDoc(collection(db, "experiences"), experienceToSubmit);
+        setExperiences([...experiences, { ...experienceToSubmit, id: docRef.id }]);
+        toast({
+          title: "Success",
+          description: "Experience added successfully",
+        });
+      }
       setNewExperience({
         role: "",
         company: "",
@@ -122,15 +136,12 @@ const AdminExperienceForm = () => {
         startDate: "",
         endDate: "",
       });
-      toast({
-        title: "Success",
-        description: "Experience added successfully",
-      });
+      setEditId(null);
     } catch (error) {
-      console.error("Error adding experience:", error);
+      console.error("Error submitting experience:", error);
       toast({
         title: "Error",
-        description: "Failed to add experience",
+        description: "Failed to submit experience",
         variant: "destructive",
       });
     } finally {
@@ -158,6 +169,11 @@ const AdminExperienceForm = () => {
     }
   };
 
+  const handleEditExperience = (experience: Experience) => {
+    setEditId(experience.id || null);
+    setNewExperience({ ...experience });
+  };
+
   if (fetchLoading) {
     return <div>Loading experience data...</div>;
   }
@@ -166,7 +182,9 @@ const AdminExperienceForm = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Add New Experience</CardTitle>
+          <CardTitle className="text-xl">
+            {editId ? "Edit Experience" : "Add New Experience"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddExperience} className="space-y-4">
@@ -246,7 +264,7 @@ const AdminExperienceForm = () => {
             </div>
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Adding..." : "Add Experience"}
+              {loading ? (editId ? "Updating..." : "Adding...") : editId ? "Update Experience" : "Add Experience"}
             </Button>
           </form>
         </CardContent>
@@ -259,14 +277,24 @@ const AdminExperienceForm = () => {
         ) : (
           experiences.map((experience) => (
             <Card key={experience.id} className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 h-8 w-8 text-destructive"
-                onClick={() => handleDeleteExperience(experience.id)}
-              >
-                <Trash2 className="h-5 w-5" />
-              </Button>
+              <div className="absolute top-2 right-2 flex space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-blue-500"
+                  onClick={() => handleEditExperience(experience)}
+                >
+                  <Pencil className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive"
+                  onClick={() => handleDeleteExperience(experience.id)}
+                >
+                  <Trash2 className="h-5 w-5" />
+                </Button>
+              </div>
               <CardContent className="pt-6">
                 <div className="space-y-2">
                   <h4 className="font-medium">{experience.role}</h4>
