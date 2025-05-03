@@ -40,17 +40,17 @@ const AdminLogin = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-950 to-purple-900">
-      <Card className="w-full max-w-md bg-gradient-to-br from-white/10 to-white/5 text-white backdrop-blur-sm border border-white/10">
+      <Card className="w-full max-w-md bg-white shadow-lg border border-gray-200">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-white">Admin Login</CardTitle>
-          <CardDescription className="text-gray-300">
+          <CardTitle className="text-2xl font-bold text-gray-800">Admin Login</CardTitle>
+          <CardDescription className="text-gray-600">
             Login to manage your portfolio content
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
+              <Label htmlFor="email" className="text-gray-700">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -58,18 +58,18 @@ const AdminLogin = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Password</Label>
+              <Label htmlFor="password" className="text-gray-700">Password</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400"
               />
             </div>
           </CardContent>

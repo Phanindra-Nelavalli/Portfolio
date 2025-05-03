@@ -116,3 +116,4 @@
 .text-highlight-selector {
   @apply flex items-center space-x-2 mt-2 p-2 border border-gray-200 rounded-md;
 }
+

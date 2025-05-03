@@ -65,9 +65,9 @@ const AdminDashboard = () => {
   return (
     <PortfolioProvider>
       <div className="min-h-screen bg-gradient-to-r from-indigo-950 to-purple-900 p-4 md:p-8">
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-white">
           <CardHeader className="flex flex-row items-center justify-between border-b">
-            <CardTitle>Portfolio Admin Dashboard</CardTitle>
+            <CardTitle className="text-gray-800">Portfolio Admin Dashboard</CardTitle>
             <Button onClick={handleSignOut} variant="outline">
               Sign Out
             </Button>
