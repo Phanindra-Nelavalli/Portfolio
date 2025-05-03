@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -7,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Trash2 } from "lucide-react";
+import { Trash2, Code2, FileCode, Database, Laptop, FileJson, PenTool } from "lucide-react";
 
 interface Skill {
   id?: string;
@@ -15,6 +14,17 @@ interface Skill {
   category: string;
   level: number;
 }
+
+const categoryIcons: Record<string, JSX.Element> = {
+  Languages: <Code2 />,
+  Frontend: <FileCode />,
+  Backend: <Database />,
+  Mobile: <Laptop />,
+  "Data Tools": <FileJson />,
+  Design: <PenTool />,
+};
+
+const categoryOptions = Object.keys(categoryIcons);
 
 const AdminSkillsForm = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -36,7 +46,7 @@ const AdminSkillsForm = () => {
           id: doc.id,
           ...doc.data()
         })) as Skill[];
-        
+
         setSkills(skillsList);
       } catch (error) {
         console.error("Error fetching skills:", error);
@@ -53,11 +63,11 @@ const AdminSkillsForm = () => {
     fetchSkills();
   }, [toast]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewSkill(prev => ({ 
-      ...prev, 
-      [name]: name === "level" ? parseInt(value, 10) : value 
+    setNewSkill(prev => ({
+      ...prev,
+      [name]: name === "level" ? parseInt(value, 10) : value
     }));
   };
 
@@ -91,7 +101,7 @@ const AdminSkillsForm = () => {
 
   const handleDeleteSkill = async (id: string | undefined) => {
     if (!id) return;
-    
+
     try {
       await deleteDoc(doc(db, "skills", id));
       setSkills(skills.filter(skill => skill.id !== id));
@@ -133,20 +143,27 @@ const AdminSkillsForm = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Input
+                <select
                   id="category"
                   name="category"
                   value={newSkill.category}
                   onChange={handleInputChange}
-                  placeholder="Frontend"
                   required
-                />
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="" disabled>Select a category</option>
+                  {categoryOptions.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="level">
                 Proficiency Level: {newSkill.level}%
@@ -161,14 +178,14 @@ const AdminSkillsForm = () => {
                 onChange={handleInputChange}
               />
             </div>
-            
+
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Adding..." : "Add Skill"}
             </Button>
           </form>
         </CardContent>
       </Card>
-      
+
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Existing Skills</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -177,26 +194,29 @@ const AdminSkillsForm = () => {
           ) : (
             skills.map(skill => (
               <Card key={skill.id} className="relative">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="absolute top-2 right-2 h-8 w-8 text-destructive"
                   onClick={() => handleDeleteSkill(skill.id)}
                 >
                   <Trash2 className="h-5 w-5" />
                 </Button>
-                <CardContent className="pt-6">
-                  <div className="space-y-2">
+                <CardContent className="pt-6 space-y-2">
+                  <div className="flex items-center justify-between">
                     <h4 className="font-medium">{skill.name}</h4>
-                    <p className="text-xs text-muted-foreground">{skill.category}</p>
-                    <div className="w-full bg-muted rounded-full h-2.5">
-                      <div 
-                        className="bg-indigo-600 h-2.5 rounded-full" 
-                        style={{ width: `${skill.level}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-xs text-right">{skill.level}%</p>
+                    <span className="text-muted-foreground">
+                      {categoryIcons[skill.category] ?? null}
+                    </span>
                   </div>
+                  <p className="text-xs text-muted-foreground">{skill.category}</p>
+                  <div className="w-full bg-muted rounded-full h-2.5">
+                    <div
+                      className="bg-indigo-600 h-2.5 rounded-full"
+                      style={{ width: `${skill.level}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-right">{skill.level}%</p>
                 </CardContent>
               </Card>
             ))
