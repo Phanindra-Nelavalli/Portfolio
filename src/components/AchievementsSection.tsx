@@ -1,33 +1,33 @@
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { motion } from "framer-motion";
+import { Award } from "lucide-react";
 
-import { motion } from 'framer-motion';
-import { Award } from 'lucide-react';
-import { cn } from "@/lib/utils";
-
-interface AchievementProps {
+interface Achievement {
+  id?: string;
   title: string;
+  date: string;
   description: string;
-  index: number;
 }
 
-const Achievement = ({ title, description, index }: AchievementProps) => (
-  <motion.div 
+const AchievementItem = ({ title, description, index }: { title: string; description: string; index: number }) => (
+  <motion.div
     className="relative mb-16 last:mb-0"
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.7, delay: index * 0.2 }}
     viewport={{ once: true }}
   >
-    {/* Timeline dot */}
-    <motion.div 
+    <motion.div
       className="absolute top-0 left-0 w-4 h-4 bg-violet-400 rounded-full transform -translate-x-1/2"
       initial={{ scale: 0, opacity: 0 }}
       whileInView={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.5, delay: index * 0.2 + 0.3 }}
       viewport={{ once: true }}
     />
-    
-    {/* Achievement content */}
-    <motion.div 
+
+    <motion.div
       className="ml-6 bg-white/5 p-6 rounded-lg backdrop-blur-sm"
       whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.3)" }}
       transition={{ duration: 0.3 }}
@@ -46,25 +46,29 @@ const Achievement = ({ title, description, index }: AchievementProps) => (
 );
 
 const AchievementsSection = () => {
-  const achievements = [
-    {
-      title: "Finalist in Internal Hackathon of SIH at VITB",
-      description: "Developed a solution to a practical problem, creating a working prototype that impressed judges and stakeholders."
-    },
-    {
-      title: "Finalist in the Spark Tank Competition",
-      description: "Designed an innovative solution and presented it to industry experts, receiving valuable feedback and recognition."
-    },
-    {
-      title: "Top 50 Team in DEMUX 24-Hour Hackathon",
-      description: "As part of a team, developed the AGRO-GENSIS app at BVRIT Narsapur, collaborating to meet tight deadlines and deliver a functional prototype."
-    }
-  ];
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "achievements"));
+        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Achievement[];
+        setAchievements(data);
+      } catch (error) {
+        console.error("Error fetching achievements:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAchievements();
+  }, []);
 
   return (
     <section id="achievements" className="bg-gradient-to-b from-slate-900 to-indigo-950 section">
       <div className="section-container">
-        <motion.h2 
+        <motion.h2
           className="section-title gradient-text text-center mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -73,10 +77,9 @@ const AchievementsSection = () => {
         >
           Achievements
         </motion.h2>
-        
+
         <div className="relative mt-12">
-          {/* Timeline line */}
-          <motion.div 
+          <motion.div
             className="absolute left-0 top-0 bottom-0 w-0.5"
             initial={{ height: 0 }}
             whileInView={{ height: '100%' }}
@@ -84,17 +87,20 @@ const AchievementsSection = () => {
             viewport={{ once: true }}
             style={{ background: 'linear-gradient(to bottom, rgba(139, 92, 246, 0.7), rgba(139, 92, 246, 0.1))' }}
           />
-          
-          {/* Achievements */}
+
           <div className="ml-8">
-            {achievements.map((achievement, index) => (
-              <Achievement
-                key={index}
-                title={achievement.title}
-                description={achievement.description}
-                index={index}
-              />
-            ))}
+            {loading ? (
+              <p className="text-gray-400">Loading achievements...</p>
+            ) : (
+              achievements.map((achievement, index) => (
+                <AchievementItem
+                  key={achievement.id || index}
+                  title={achievement.title}
+                  description={achievement.description}
+                  index={index}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

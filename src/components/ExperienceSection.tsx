@@ -35,7 +35,7 @@ const Experience = ({
       }`}
       initial={{ opacity: 0, x: position === "left" ? -30 : 30 }}
       whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.7 }}
+      transition={{ duration: 0.1 }}
       viewport={{ once: true }}
       whileHover={{ y: -5 }}
     >
@@ -107,7 +107,7 @@ const ExperienceSection = () => {
           className="section-title gradient-text inline-block mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.1 }}
           viewport={{ once: true }}
         >
           Experience
