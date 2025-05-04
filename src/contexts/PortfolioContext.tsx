@@ -76,6 +76,7 @@ export interface HeroType {
   posX?: number;
   posY?: number;
   zoom?: number;
+  role:String
 }
 
 interface PortfolioContextType {

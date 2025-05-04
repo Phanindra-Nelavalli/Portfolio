@@ -38,7 +38,24 @@ const WorkSection = () => {
     fetchProjects();
   }, []);
 
-  if (loading) return <div className="text-center text-white py-10">Loading projects...</div>;
+  // Skeleton Loader while loading projects
+  const SkeletonLoader = () => (
+    <div className="space-y-6">
+      {[...Array(3)].map((_, index) => (
+        <div key={index} className="flex flex-col md:flex-row gap-4 animate-pulse bg-gray-700/50 rounded-lg p-6">
+          <div className="w-full h-48 bg-gray-500 rounded-lg"></div>
+          <div className="flex flex-col w-full space-y-4">
+            <div className="h-6 bg-gray-500 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-500 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-500 rounded w-2/3"></div>
+            <div className="h-6 bg-gray-500 rounded w-1/3"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  if (loading) return <SkeletonLoader />;
 
   return (
     <section

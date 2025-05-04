@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Trash2, Award, ArrowRight, View, Link, Eye } from "lucide-react";
-import { Button } from "./ui/button";
+import { Award, Eye, Link } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Certificate {
@@ -40,7 +39,50 @@ const CertificateSection = () => {
   }, []);
 
   if (fetchLoading) {
-    return <div>Loading certificate data...</div>;
+    return (
+      <section
+        id="certificates"
+        className="bg-gradient-to-b from-indigo-950 to-slate-900 py-12"
+      >
+        <div className="section-container">
+          <motion.h2
+            className="section-title gradient-text inline-block mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            Certificates
+          </motion.h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Skeleton loading effect */}
+            {[...Array(2)].map((_, index) => (
+              <div
+                key={index}
+                className="relative glass-card p-6 animate-pulse"
+              >
+                <div className="absolute right-6 top-6 p-2 bg-violet-400/20 rounded-full">
+                  <Award className="h-6 w-6 text-violet-400" />
+                </div>
+
+                {/* Skeleton for title */}
+                <div className="h-6 bg-gray-700 rounded w-3/4 mb-4" />
+                {/* Skeleton for issuedBy and date */}
+                <div className="h-4 bg-gray-700 rounded w-1/2 mb-6" />
+                {/* Skeleton for image */}
+                <div className="h-48 bg-gray-700 rounded mb-4" />
+                {/* Skeleton for actions */}
+                <div className="flex justify-between mt-4">
+                  <div className="h-8 bg-gray-700 rounded w-1/3" />
+                  <div className="h-8 bg-gray-700 rounded w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

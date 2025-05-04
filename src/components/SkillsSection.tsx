@@ -51,7 +51,7 @@ const SkillCard = ({
       boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.3)",
     }}
     transition={{
-      opacity: { duration: 0.1, delay: 0},
+      opacity: { duration: 0.1, delay: 0 },
       y: { duration: 0.1, delay: 0 },
       boxShadow: { duration: 0.01 }, // fast hover effect
     }}
@@ -71,8 +71,23 @@ const SkillCard = ({
   </motion.div>
 );
 
+const SkeletonCard = () => (
+  <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm animate-pulse">
+    <div className="flex items-center mb-4">
+      <div className="mr-4 bg-gray-700/30 p-3 rounded-full w-10 h-10" />
+      <div className="h-6 bg-gray-700 rounded w-1/3" />
+    </div>
+    <div className="space-y-2">
+      <div className="h-4 bg-gray-700 rounded w-3/4" />
+      <div className="h-4 bg-gray-700 rounded w-2/3" />
+      <div className="h-4 bg-gray-700 rounded w-1/2" />
+    </div>
+  </div>
+);
+
 const SkillsSection = () => {
   const [groupedSkills, setGroupedSkills] = useState<GroupedSkill[]>([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -99,6 +114,8 @@ const SkillsSection = () => {
         setGroupedSkills(formatted);
       } catch (error) {
         console.error("Error fetching skills:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -119,15 +136,19 @@ const SkillsSection = () => {
         </motion.h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          {groupedSkills.map((skill, index) => (
-            <SkillCard
-              key={index}
-              title={skill.title}
-              items={skill.items}
-              icon={skill.icon}
-              index={index}
-            />
-          ))}
+          {loading
+            ? // If loading, show skeleton loaders
+              Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
+            : // Otherwise, show actual content
+              groupedSkills.map((skill, index) => (
+                <SkillCard
+                  key={index}
+                  title={skill.title}
+                  items={skill.items}
+                  icon={skill.icon}
+                  index={index}
+                />
+              ))}
         </div>
       </div>
     </section>
