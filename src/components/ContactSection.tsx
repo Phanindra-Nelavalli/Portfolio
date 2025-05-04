@@ -6,7 +6,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent } from "./ui/card";
 import { toast } from "@/hooks/use-toast";
-import emailjs from "emailjs-com"; // ✅ Added for EmailJS
+import emailjs from "emailjs-com";
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
