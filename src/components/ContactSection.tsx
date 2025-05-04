@@ -15,6 +15,7 @@ const ContactSection = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false); // To simulate loading state
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,6 +27,7 @@ const ContactSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setLoading(true); // Simulate form submission delay
 
     const serviceID = "service_13gqkik"; // 🔁 Replace with your actual Service ID
     const templateID = "template_et2nvh6"; // 🔁 Replace with your actual Template ID
@@ -48,6 +50,7 @@ const ContactSection = () => {
       });
     } finally {
       setIsSubmitting(false);
+      setLoading(false); // Stop loading simulation
     }
   };
 
@@ -126,46 +129,73 @@ const ContactSection = () => {
                     <label htmlFor="name" className="block text-sm mb-2">
                       Name
                     </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Your name"
-                      className="bg-white/10 border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500"
-                      required
-                    />
+                    <div
+                      className={`${
+                        loading ? "bg-gray-700 animate-pulse" : "bg-white/10"
+                      } border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 p-3 rounded-md`}
+                    >
+                      {loading ? (
+                        <div className="h-6 bg-gray-700 rounded w-3/4" />
+                      ) : (
+                        <Input
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="Your name"
+                          required
+                        />
+                      )}
+                    </div>
                   </div>
 
                   <div>
                     <label htmlFor="email" className="block text-sm mb-2">
                       Email
                     </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Your email"
-                      className="bg-white/10 border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500"
-                      required
-                    />
+                    <div
+                      className={`${
+                        loading ? "bg-gray-700 animate-pulse" : "bg-white/10"
+                      } border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 p-3 rounded-md`}
+                    >
+                      {loading ? (
+                        <div className="h-6 bg-gray-700 rounded w-3/4" />
+                      ) : (
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="Your email"
+                          required
+                        />
+                      )}
+                    </div>
                   </div>
 
                   <div>
                     <label htmlFor="message" className="block text-sm mb-2">
                       Message
                     </label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      placeholder="Your message"
-                      className="bg-white/10 border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 min-h-[120px]"
-                      required
-                    />
+                    <div
+                      className={`${
+                        loading ? "bg-gray-700 animate-pulse" : "bg-white/10"
+                      } border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 p-3 rounded-md`}
+                    >
+                      {loading ? (
+                        <div className="h-24 bg-gray-700 rounded w-full" />
+                      ) : (
+                        <Textarea
+                          id="message"
+                          name="message"
+                          value={formData.message}
+                          onChange={handleChange}
+                          placeholder="Your message"
+                          required
+                        />
+                      )}
+                    </div>
                   </div>
 
                   <motion.div

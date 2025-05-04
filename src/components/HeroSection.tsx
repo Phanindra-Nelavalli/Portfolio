@@ -30,6 +30,7 @@ const HeroSection = () => {
   const posX = hero?.posX || 50;
   const posY = hero?.posY || 50;
   const zoom = hero?.zoom || 1;
+  const role = hero?.role || "Developer";
 
   const cgpa = hero?.cgpa || "9.42";
 
@@ -37,12 +38,46 @@ const HeroSection = () => {
     return (
       <section
         id="home"
-        className="min-h-screen flex items-center justify-center hero-gradient pt-20"
+        className="min-h-screen flex items-center hero-gradient pt-20 px-4"
       >
-        <div className="text-white text-xl">Loading...</div>
+        <div className="section-container w-full animate-pulse">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+            {/* Left Column (Text) */}
+            <div className="md:w-1/2 w-full space-y-6">
+              <div className="h-12 w-3/4 bg-white/10 rounded" />
+              <div className="h-8 w-2/3 bg-white/10 rounded" />
+              <div className="h-20 w-full bg-white/10 rounded" />
+  
+              <div className="flex gap-4 mt-4">
+                <div className="h-10 w-36 bg-violet-500/20 rounded" />
+                <div className="h-10 w-36 border border-white/10 rounded" />
+              </div>
+  
+              <div className="flex space-x-4 mt-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-10 w-10 bg-white/10 rounded-full" />
+                ))}
+              </div>
+            </div>
+  
+            {/* Right Column (Avatar) */}
+            <div className="md:w-2/5 w-full flex justify-center md:justify-end">
+              <div className="relative">
+                <div className="w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-white/10 rounded-full" />
+  
+                {/* CGPA Badge */}
+                <div className="absolute -bottom-4 right-0 w-32 h-10 bg-white/10 rounded-full border border-white/20" />
+  
+                {/* Role Badge */}
+                <div className="absolute -top-8 -left-12 w-28 h-10 bg-white/10 rounded-full border border-white/20" />
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     );
   }
+  
 
   return (
     <section
@@ -208,12 +243,12 @@ const HeroSection = () => {
               )}
 
               <motion.div
-                className="absolute -top-6 -left-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl"
+                className="absolute -top-8 -left-12 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 shadow-xl"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 1.4, type: "spring" }}
               >
-                <span className="text-white font-medium">Developer</span>
+                <span className="text-white font-medium">{role}</span>
               </motion.div>
             </div>
           </motion.div>

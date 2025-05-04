@@ -68,6 +68,35 @@ const Experience = ({
   </div>
 );
 
+// Skeleton Loader Component
+const SkeletonLoader = () => (
+  <div className="space-y-12">
+    {[...Array(3)].map((_, index) => (
+      <div key={index} className="flex justify-between items-center animate-pulse">
+        {/* Skeleton Card Placeholder */}
+        <div className="w-full md:w-1/2 p-6 bg-gray-800/50 rounded-lg">
+          <div className="flex mb-4">
+            <div className="w-12 h-12 bg-gray-600 rounded-full mr-4"></div>
+            <div className="w-3/4 h-6 bg-gray-600 rounded"></div>
+          </div>
+          <div className="w-1/2 h-4 bg-gray-600 rounded mb-2"></div>
+          <div className="w-full h-16 bg-gray-600 rounded mb-4"></div>
+          <div className="flex gap-2">
+            {[...Array(3)].map((_, skillIndex) => (
+              <div
+                key={skillIndex}
+                className="w-20 h-6 bg-gray-600 rounded-md"
+              ></div>
+            ))}
+          </div>
+        </div>
+        {/* Skeleton Timeline Dot */}
+        <div className="hidden md:block w-4 h-4 bg-gray-600 rounded-full"></div>
+      </div>
+    ))}
+  </div>
+);
+
 const ExperienceSection = () => {
   const [experiences, setExperiences] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +123,7 @@ const ExperienceSection = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading experiences...</div>;
+    return <SkeletonLoader />;
   }
 
   return (
