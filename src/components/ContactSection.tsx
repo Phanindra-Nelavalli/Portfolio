@@ -132,7 +132,7 @@ const ContactSection = () => {
                     <div
                       className={`${
                         loading ? "bg-gray-700 animate-pulse" : "bg-white/10"
-                      } border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 p-3 rounded-md`}
+                      } border-violet-400/20 focus:border-violet-400 text-black placeholder:text-gray-500 p-3 rounded-md`}
                     >
                       {loading ? (
                         <div className="h-6 bg-gray-700 rounded w-3/4" />
@@ -156,7 +156,7 @@ const ContactSection = () => {
                     <div
                       className={`${
                         loading ? "bg-gray-700 animate-pulse" : "bg-white/10"
-                      } border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 p-3 rounded-md`}
+                      } border-violet-400/20 focus:border-violet-400 text-black placeholder:text-gray-500 p-3 rounded-md`}
                     >
                       {loading ? (
                         <div className="h-6 bg-gray-700 rounded w-3/4" />
@@ -181,7 +181,7 @@ const ContactSection = () => {
                     <div
                       className={`${
                         loading ? "bg-gray-700 animate-pulse" : "bg-white/10"
-                      } border-violet-400/20 focus:border-violet-400 placeholder:text-gray-500 p-3 rounded-md`}
+                      } border-violet-400/20 focus:border-violet-400 text-black placeholder:text-gray-500 p-3 rounded-md`}
                     >
                       {loading ? (
                         <div className="h-24 bg-gray-700 rounded w-full" />
