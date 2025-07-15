@@ -229,6 +229,113 @@ const AdminHeroForm = () => {
             </div>
 
             {/* Profile Image and Sliders */}
+            {/* Profile Image Upload & Sliders */}
+            <div className="space-y-2">
+              <Label>Profile Image</Label>
+
+              {/* File Upload (Cloudinary) */}
+              <FileUpload
+                onFileUpload={(url) =>
+                  setFormData((fd) => ({ ...fd, imageUrl: url }))
+                }
+                currentImageUrl={formData.imageUrl}
+                folder="profile-images"
+                accept="image/*"
+              />
+
+              {/* Preview with sliders applied */}
+              <div className="flex flex-col md:flex-row items-center justify-center text-center space-y-6 md:space-y-0 md:space-x-6 w-full mt-4">
+                <div className="relative">
+                  <div className="block w-28 h-28 rounded-full overflow-hidden border-2 border-gray-300">
+                    {formData.imageUrl ? (
+                      <img
+                        src={formData.imageUrl}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover transition-transform duration-300"
+                        style={{
+                          objectPosition: `${formData.posX}% ${formData.posY}%`,
+                          transform: `scale(${formData.zoom})`,
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-lg font-semibold text-gray-600">
+                          {formData.name
+                            .replace(/<[^>]*>?/g, "")
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Sliders */}
+                <div className="space-y-4 flex-1 w-full max-w-md">
+                  {/* Horizontal */}
+                  <div>
+                    <Label htmlFor="posX">Horizontal Position</Label>
+                    <Input
+                      id="posX"
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={formData.posX}
+                      onChange={(e) =>
+                        handleSliderChange("posX", Number(e.target.value))
+                      }
+                    />
+                    <p className="text-xs text-gray-500">
+                      Value: {formData.posX}%
+                    </p>
+                  </div>
+
+                  {/* Vertical */}
+                  <div>
+                    <Label htmlFor="posY">Vertical Position</Label>
+                    <Input
+                      id="posY"
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={formData.posY}
+                      onChange={(e) =>
+                        handleSliderChange("posY", Number(e.target.value))
+                      }
+                    />
+                    <p className="text-xs text-gray-500">
+                      Value: {formData.posY}%
+                    </p>
+                  </div>
+
+                  {/* Zoom */}
+                  <div>
+                    <Label htmlFor="zoom">Zoom</Label>
+                    <Input
+                      id="zoom"
+                      type="range"
+                      min={1}
+                      max={2}
+                      step={0.01}
+                      value={formData.zoom}
+                      onChange={(e) =>
+                        handleSliderChange("zoom", Number(e.target.value))
+                      }
+                    />
+                    <p className="text-xs text-gray-500">
+                      Zoom: {formData.zoom.toFixed(2)}x
+                    </p>
+                  </div>
+
+                  <p className="text-sm text-gray-500">
+                    Use the sliders to adjust the profile image’s position and
+                    zoom.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* (Unchanged Code) */}
 
             {/* Resume */}
