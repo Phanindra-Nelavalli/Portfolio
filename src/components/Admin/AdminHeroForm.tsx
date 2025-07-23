@@ -82,6 +82,24 @@ const AdminHeroForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const uploadResumeFile = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "unsigned_preset");
+    formData.append("resource_type", "raw");
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dte5onh3s/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+    return data.secure_url;
+  };
+
   const [formData, setFormData] = useState<HeroType>({
     name: "",
     subtitle: "",
@@ -336,18 +354,16 @@ const AdminHeroForm = () => {
               </div>
             </div>
 
-            {/* (Unchanged Code) */}
-
             {/* Resume */}
             <div className="space-y-2">
-              <Label>Resume</Label>
-              <FileUpload
-                onFileUpload={(url) =>
-                  setFormData((fd) => ({ ...fd, resumeUrl: url }))
-                }
-                currentImageUrl={formData.resumeUrl}
-                folder="resume"
-                accept=".pdf,.doc,.docx"
+              <Label htmlFor="resumeUrl">Resume URL</Label>
+              <Input
+                id="resumeUrl"
+                name="resumeUrl"
+                type="url"
+                value={formData.resumeUrl}
+                onChange={handleChange}
+                placeholder="Paste resume link here (PDF, Google Drive, etc.)"
               />
               {formData.resumeUrl && (
                 <p className="mt-2 text-sm text-blue-600">
@@ -356,7 +372,7 @@ const AdminHeroForm = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View uploaded resume
+                    View Resume
                   </a>
                 </p>
               )}

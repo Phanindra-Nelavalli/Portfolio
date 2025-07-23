@@ -7,18 +7,15 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Trash2, Pencil } from "lucide-react";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
+import FileUpload from "./FileUpload";
+// Adjust the import path if needed
 
 interface Certificate {
   id?: string;
@@ -38,7 +35,6 @@ const AdminCertificatesForm = () => {
     imageUrl: "",
     credentialUrl: "",
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -49,7 +45,7 @@ const AdminCertificatesForm = () => {
       try {
         const certificatesCollection = collection(db, "certificates");
         const snapshot = await getDocs(certificatesCollection);
-        const list = snapshot.docs.map(doc => ({
+        const list = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Certificate[];
@@ -71,19 +67,12 @@ const AdminCertificatesForm = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setNewCertificate(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImageFile(e.target.files[0]);
-    }
+    setNewCertificate((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEdit = (certificate: Certificate) => {
     setNewCertificate(certificate);
     setEditingId(certificate.id ?? null);
-    setImageFile(null);
   };
 
   const handleCancelEdit = () => {
@@ -95,7 +84,6 @@ const AdminCertificatesForm = () => {
       imageUrl: "",
       credentialUrl: "",
     });
-    setImageFile(null);
   };
 
   const handleAddOrUpdate = async (e: React.FormEvent) => {
@@ -103,43 +91,45 @@ const AdminCertificatesForm = () => {
     setLoading(true);
 
     try {
-      let imageUrl = newCertificate.imageUrl;
+      const imageUrl = newCertificate.imageUrl;
 
-      if (imageFile) {
-        const storageRef = ref(storage, `certificates/${imageFile.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, imageFile);
-        await new Promise<void>((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            null,
-            (error) => reject(error),
-            async () => {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              imageUrl = downloadURL;
-              resolve();
-            }
-          );
+      if (!imageUrl) {
+        toast({
+          title: "Missing Image",
+          description: "Please upload a certificate image.",
+          variant: "destructive",
         });
+        setLoading(false);
+        return;
       }
 
       if (editingId) {
-        // Update existing certificate
         const certRef = doc(db, "certificates", editingId);
         await updateDoc(certRef, { ...newCertificate, imageUrl });
         setCertificates((prev) =>
-          prev.map(cert =>
-            cert.id === editingId ? { ...newCertificate, id: editingId, imageUrl } : cert
+          prev.map((cert) =>
+            cert.id === editingId
+              ? { ...newCertificate, id: editingId, imageUrl }
+              : cert
           )
         );
-        toast({ title: "Updated", description: "Certificate updated successfully." });
+        toast({
+          title: "Updated",
+          description: "Certificate updated successfully.",
+        });
       } else {
-        // Add new certificate
         const docRef = await addDoc(collection(db, "certificates"), {
           ...newCertificate,
           imageUrl,
         });
-        setCertificates([...certificates, { ...newCertificate, id: docRef.id, imageUrl }]);
-        toast({ title: "Success", description: "Certificate added successfully." });
+        setCertificates([
+          ...certificates,
+          { ...newCertificate, id: docRef.id, imageUrl },
+        ]);
+        toast({
+          title: "Success",
+          description: "Certificate added successfully.",
+        });
       }
 
       setNewCertificate({
@@ -149,7 +139,6 @@ const AdminCertificatesForm = () => {
         imageUrl: "",
         credentialUrl: "",
       });
-      setImageFile(null);
       setEditingId(null);
     } catch (error) {
       toast({
@@ -169,7 +158,7 @@ const AdminCertificatesForm = () => {
 
     try {
       await deleteDoc(doc(db, "certificates", id));
-      setCertificates(certificates.filter(cert => cert.id !== id));
+      setCertificates(certificates.filter((cert) => cert.id !== id));
       toast({ title: "Deleted", description: "Certificate deleted." });
     } catch (error) {
       toast({
@@ -227,13 +216,15 @@ const AdminCertificatesForm = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">Certificate Image</Label>
-                <Input
-                  id="imageUrl"
-                  name="imageUrl"
-                  type="file"
+                <Label>Certificate Image</Label>
+                <FileUpload
+                  onFileUpload={(url) => {
+                    console.log("Uploaded image URL:", url); // ← check if this fires
+                    setNewCertificate((prev) => ({ ...prev, imageUrl: url }));
+                  }}
+                  currentImageUrl={newCertificate.imageUrl}
+                  folder="certificates"
                   accept="image/*"
-                  onChange={handleFileChange}
                 />
               </div>
             </div>
@@ -277,7 +268,7 @@ const AdminCertificatesForm = () => {
           {certificates.length === 0 ? (
             <p className="text-muted-foreground">No certificates added yet.</p>
           ) : (
-            certificates.map(cert => (
+            certificates.map((cert) => (
               <Card key={cert.id} className="relative">
                 <div className="absolute top-2 right-2 flex gap-1">
                   <Button
