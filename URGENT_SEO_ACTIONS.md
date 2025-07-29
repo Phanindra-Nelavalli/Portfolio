@@ -11,20 +11,24 @@
 ## 📈 Boost Your Portfolio's Authority
 
 ### 1. Create Strong Backlinks FROM Your Existing Profiles
+
 Since your LinkedIn and YouTube are already ranking, use them to boost your portfolio:
 
 **On LinkedIn:**
+
 - Add your portfolio URL to your profile header
 - Post about your portfolio: "Check out my new portfolio showcasing my projects: https://phanindra-nelavalli.vercel.app"
 - Share individual project posts with portfolio links
 - Add portfolio URL to your LinkedIn bio/summary
 
 **On YouTube:**
+
 - Add portfolio URL to channel description
 - Include portfolio link in video descriptions
 - Create a video showcasing your portfolio
 
 **Other Social Media:**
+
 - Instagram bio: Add portfolio link
 - Twitter/X profile: Add portfolio link
 - GitHub profile README: Add prominent portfolio link
@@ -34,11 +38,13 @@ Since your LinkedIn and YouTube are already ranking, use them to boost your port
 Add these to your existing pages for better SEO:
 
 **Homepage Content Addition:**
+
 - Add a visible text section with "Phanindra Nelavalli Portfolio"
 - Include more text content about yourself
 - Add "Welcome to Phanindra Nelavalli's Portfolio" heading
 
 **Create New Pages:**
+
 - `/about` - Detailed about page
 - `/contact` - Contact page
 - `/projects` - Detailed projects page
@@ -46,13 +52,15 @@ Add these to your existing pages for better SEO:
 ### 3. Technical Quick Wins
 
 **Add these meta tags for better recognition:**
+
 ```html
-<meta name="application-name" content="Phanindra Nelavalli Portfolio">
-<meta name="msapplication-TileColor" content="#8B5CF6">
-<meta name="theme-color" content="#8B5CF6">
+<meta name="application-name" content="Phanindra Nelavalli Portfolio" />
+<meta name="msapplication-TileColor" content="#8B5CF6" />
+<meta name="theme-color" content="#8B5CF6" />
 ```
 
 **Create a manifest.json for PWA recognition:**
+
 ```json
 {
   "name": "Phanindra Nelavalli Portfolio",
@@ -64,6 +72,7 @@ Add these to your existing pages for better SEO:
 ## 🎯 Marketing Strategy
 
 ### Week 1 Actions:
+
 1. **Submit to all search engines** (Google, Bing, Yandex)
 2. **Share on all social media** with specific hashtags
 3. **Email signature** - Add portfolio link
@@ -71,21 +80,24 @@ Add these to your existing pages for better SEO:
 5. **College/University directory** - Submit portfolio
 
 ### Week 2 Actions:
+
 1. **Developer communities**: Share on Reddit r/webdev, Dev.to
 2. **Create content**: Write about your projects on LinkedIn
 3. **Networking**: Send portfolio to professors, colleagues
 4. **Local directories**: Submit to local business/student directories
 
 ### Hashtags to Use When Sharing:
+
 ```
-#PhanindraNelavalli #Portfolio #FullStackDeveloper #FlutterDeveloper 
-#ReactDeveloper #WebDeveloper #StudentDeveloper #TechPortfolio 
+#PhanindraNelavalli #Portfolio #FullStackDeveloper #FlutterDeveloper
+#ReactDeveloper #WebDeveloper #StudentDeveloper #TechPortfolio
 #SignBridge #LexicaAR #ComputerScience #AI #ML #AR
 ```
 
 ## 📊 Monitoring Your Progress
 
 **Check These Weekly:**
+
 1. Google Search: "Phanindra Nelavalli"
 2. Google Search: "Phanindra Nelavalli portfolio"
 3. Google Search: "Phanindra Nelavalli developer"
