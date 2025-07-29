@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <!-- Main Homepage -->
+  <!-- Homepage -->
   <url>
     <loc>https://phanindra-nelavalli.vercel.app/</loc>
     <lastmod>2025-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
   </url>
 
-  <!-- Admin login page (if public) -->
+  <!-- Admin Login -->
   <url>
     <loc>https://phanindra-nelavalli.vercel.app/admin/login</loc>
     <lastmod>2025-07-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
 
-  <!-- Robots.txt and manifest (optional but valid) -->
+  <!-- robots.txt -->
   <url>
     <loc>https://phanindra-nelavalli.vercel.app/robots.txt</loc>
     <lastmod>2025-07-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.2</priority>
   </url>
 
+  <!-- manifest.json -->
   <url>
     <loc>https://phanindra-nelavalli.vercel.app/manifest.json</loc>
     <lastmod>2025-07-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.2</priority>
   </url>
 
 </urlset>
