@@ -1,0 +1,16 @@
+{
+  "name": "Phanindra Nelavalli Portfolio",
+  "short_name": "Phanindra Portfolio",
+  "description": "Portfolio of Phanindra Nelavalli - Full Stack Developer, AI/ML Engineer, Flutter Developer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F0F23",
+  "theme_color": "#8B5CF6",
+  "icons": [
+    {
+      "src": "https://png.pngtree.com/png-clipart/20230510/original/pngtree-letter-p-logo-icon-png-image_9155592.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
