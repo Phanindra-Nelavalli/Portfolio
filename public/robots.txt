@@ -1,3 +1,5 @@
+Sitemap: https://phanindra-nelavalli.vercel.app/sitemap.xml
+
 User-agent: Googlebot
 Allow: /
 
@@ -12,6 +14,3 @@ Allow: /
 
 User-agent: *
 Allow: /
-
-# Sitemap
-Sitemap: https://phanindra-nelavalli.vercel.app/sitemap.xml
